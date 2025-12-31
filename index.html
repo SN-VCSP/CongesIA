@@ -149,6 +149,101 @@
             margin-top: 15px;
             border-left: 4px solid var(--vinci-blue);
             animation: slideIn 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .ai-suggestion {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid var(--vinci-blue);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ai-suggestion:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0, 51, 102, 0.15);
+        }
+
+        .ai-suggestion-title {
+            font-weight: bold;
+            color: var(--vinci-blue);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-suggestion-desc {
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .planning-helper {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 2px solid var(--success);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .planning-helper h4 {
+            color: var(--vinci-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .planning-suggestions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .suggestion-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .suggestion-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: var(--vinci-blue);
+        }
+
+        .suggestion-card-title {
+            font-weight: bold;
+            color: var(--vinci-blue);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .suggestion-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .suggestion-card-action {
+            display: inline-block;
+            padding: 6px 12px;
+            background: var(--gradient-1);
+            color: white;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .suggestion-card-action:hover {
+            transform: scale(1.05);
         }
 
         @keyframes slideIn {
@@ -456,16 +551,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-bottom: 15px;
+            padding: 12px 15px;
             background: var(--gradient-1);
-            border-radius: 15px;
+            border-radius: 12px;
             color: white;
         }
 
         .calendar-nav {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
 
@@ -473,11 +568,11 @@
             background: rgba(255,255,255,0.2);
             border: none;
             color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
+            padding: 6px 12px;
+            border-radius: 8px;
             cursor: pointer;
             transition: background 0.3s;
-            font-size: 1.2rem;
+            font-size: 1rem;
         }
 
         .nav-btn:hover {
@@ -485,24 +580,24 @@
         }
 
         .current-month {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: bold;
         }
 
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
+            gap: 4px;
         }
 
         .day-header {
             text-align: center;
             font-weight: bold;
-            padding: 15px 10px;
+            padding: 8px 4px;
             background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border-radius: 10px;
+            border-radius: 8px;
             color: var(--vinci-blue);
-            font-size: 0.9rem;
+            font-size: 0.75rem;
         }
 
         .calendar-day {
@@ -511,22 +606,24 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            border-radius: 15px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             background: #f8fafc;
-            border: 2px solid transparent;
+            border: 1px solid transparent;
             position: relative;
             overflow: hidden;
+            min-height: 35px;
         }
 
         .calendar-day:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: scale(1.08);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            border-color: var(--vinci-blue);
         }
 
         .calendar-day.other-month {
-            opacity: 0.3;
+            opacity: 0.25;
         }
 
         .calendar-day.weekend {
@@ -557,15 +654,15 @@
         }
 
         .day-number {
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
 
         .day-indicator {
             position: absolute;
-            bottom: 5px;
-            width: 6px;
-            height: 6px;
+            bottom: 2px;
+            width: 4px;
+            height: 4px;
             border-radius: 50%;
             background: var(--vinci-red);
         }
@@ -719,7 +816,15 @@
             }
 
             .day-number {
-                font-size: 1rem;
+                font-size: 0.8rem;
+            }
+
+            .calendar-day {
+                min-height: 30px;
+            }
+
+            .planning-suggestions {
+                grid-template-columns: 1fr;
             }
 
             .tabs {
@@ -752,13 +857,15 @@
                 </div>
             </div>
             <div id="aiMessage" class="ai-message">
-                Bonjour ! Je suis votre assistant IA pour la gestion des congés. Je peux vous aider à :
+                <strong>👋 Bonjour !</strong> Je suis votre assistant IA pour optimiser vos congés CNETP sur toute l'année.<br><br>
+                <strong>💡 Comment je peux vous aider :</strong>
                 <ul style="margin-top: 10px; margin-left: 20px;">
-                    <li>Sélectionner vos dates sur le calendrier interactif</li>
-                    <li>Optimiser intelligemment vos périodes pour gagner des jours</li>
-                    <li>Simuler des prises de congés et calculer votre solde</li>
-                    <li>Analyser votre historique et détecter les erreurs</li>
+                    <li><strong>Planification annuelle</strong> : Je vous suggère les meilleures périodes pour vos vacances</li>
+                    <li><strong>Optimisation intelligente</strong> : Je trouve les ponts et optimise vos dates pour maximiser vos jours de repos</li>
+                    <li><strong>Conseils personnalisés</strong> : Je vous guide pour obtenir le fractionnement et optimiser votre solde</li>
+                    <li><strong>Vue d'ensemble</strong> : Je vous aide à visualiser et planifier toute votre année</li>
                 </ul>
+                <div id="aiSuggestions"></div>
             </div>
         </div>
 
@@ -804,6 +911,35 @@
                         <p style="color: var(--text-light); text-align: center; padding: 40px;">
                             Sélectionnez une période sur le calendrier pour voir les optimisations possibles
                         </p>
+                    </div>
+                </div>
+
+                <div class="card planning-helper">
+                    <h4><span class="card-icon">📅</span> Planification Annuelle - Conseils IA</h4>
+                    <p style="color: var(--text-light); margin-bottom: 15px; font-size: 0.95rem;">
+                        Laissez-moi vous aider à planifier vos vacances sur toute l'année pour optimiser votre solde et profiter au maximum.
+                    </p>
+                    <div id="planningSuggestions" class="planning-suggestions">
+                        <div class="suggestion-card">
+                            <div class="suggestion-card-title">🌉 Optimiser les ponts</div>
+                            <div class="suggestion-card-desc">Je peux identifier les meilleurs ponts de l'année pour maximiser vos jours de repos</div>
+                            <button class="suggestion-card-action" onclick="suggestBridges()">Voir les ponts</button>
+                        </div>
+                        <div class="suggestion-card">
+                            <div class="suggestion-card-title">☀️ Période estivale</div>
+                            <div class="suggestion-card-desc">Planifiez 12 jours continus en été pour obtenir le fractionnement</div>
+                            <button class="suggestion-card-action" onclick="suggestSummerPeriod()">Suggérer une période</button>
+                        </div>
+                        <div class="suggestion-card">
+                            <div class="suggestion-card-title">❄️ Période hivernale</div>
+                            <div class="suggestion-card-desc">Réservez 3-6 jours du principal en hiver pour maximiser le fractionnement</div>
+                            <button class="suggestion-card-action" onclick="suggestWinterPeriod()">Suggérer une période</button>
+                        </div>
+                        <div class="suggestion-card">
+                            <div class="suggestion-card-title">📊 Analyse complète</div>
+                            <div class="suggestion-card-desc">J'analyse votre situation et vous propose un plan d'optimisation personnalisé</div>
+                            <button class="suggestion-card-action" onclick="generateYearlyPlan()">Générer un plan</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1124,10 +1260,36 @@
 
         function updateAIMessage(message, type = 'info') {
             const aiMessage = document.getElementById('aiMessage');
-            aiMessage.innerHTML = message;
+            const suggestionsDiv = document.getElementById('aiSuggestions');
+            
+            // Garder le message principal et ajouter les suggestions
+            const baseMessage = message.includes('<strong>👋') ? message : 
+                `<strong>💬 Assistant IA :</strong><br>${message}`;
+            
+            aiMessage.innerHTML = baseMessage;
+            if (suggestionsDiv) {
+                suggestionsDiv.innerHTML = '';
+            }
+            
             aiMessage.style.borderLeftColor = type === 'success' ? 'var(--success)' : 
                                              type === 'warning' ? 'var(--warning)' : 
                                              type === 'error' ? 'var(--danger)' : 'var(--vinci-blue)';
+        }
+
+        function addAISuggestion(title, description, action) {
+            const suggestionsDiv = document.getElementById('aiSuggestions');
+            if (!suggestionsDiv) return;
+            
+            const suggestion = document.createElement('div');
+            suggestion.className = 'ai-suggestion';
+            suggestion.innerHTML = `
+                <div class="ai-suggestion-title">💡 ${title}</div>
+                <div class="ai-suggestion-desc">${description}</div>
+            `;
+            if (action) {
+                suggestion.onclick = action;
+            }
+            suggestionsDiv.appendChild(suggestion);
         }
 
         // ===== CALENDRIER =====
@@ -1288,6 +1450,8 @@
             const start = selectedDates[0];
             const end = selectedDates[selectedDates.length - 1];
             const workDays = countWorkDaysFromDates(selectedDates);
+            const startDate = new Date(start);
+            const month = startDate.getMonth();
             
             leaveHistory.push({
                 debut: start,
@@ -1303,7 +1467,49 @@
             renderCalendar();
             renderHistoryTable();
             updateStats();
-            updateAIMessage(`✅ Période ajoutée : ${workDays} jours ouvrables du ${formatDisplayDate(start)} au ${formatDisplayDate(end)}`, 'success');
+            
+            // Message intelligent avec conseils
+            let message = `✅ <strong>Période ajoutée avec succès !</strong><br><br>`;
+            message += `📅 Du ${formatDisplayDate(start)} au ${formatDisplayDate(end)}<br>`;
+            message += `📊 ${workDays} jours ouvrables consommés<br><br>`;
+            
+            // Conseils selon la période
+            if (month >= 4 && month <= 9) {
+                message += `☀️ <strong>Période estivale</strong> : `;
+                if (workDays >= 12) {
+                    message += `Excellent ! Vous respectez la condition des 12 jours continus pour le fractionnement.`;
+                } else {
+                    message += `Pensez à prendre au moins 12 jours continus en été pour être éligible au fractionnement.`;
+                }
+            } else {
+                message += `❄️ <strong>Période hivernale</strong> : `;
+                const totalTaken = leaveHistory.reduce((sum, l) => {
+                    const lMonth = new Date(l.debut).getMonth();
+                    return (lMonth < 4 || lMonth > 9) ? sum + l.jours : sum;
+                }, 0);
+                if (totalTaken >= 6) {
+                    message += `Parfait ! Vous avez ${totalTaken} jours en hiver, ce qui vous donne droit au fractionnement maximum (+2 jours).`;
+                } else if (totalTaken >= 3) {
+                    message += `Bien ! Vous avez ${totalTaken} jours en hiver, ce qui vous donne droit à +1 jour de fractionnement.`;
+                } else {
+                    message += `Pour optimiser, essayez de prendre 3-6 jours du principal en hiver pour obtenir le fractionnement.`;
+                }
+            }
+            
+            // Calculer le solde restant
+            const totalTaken = leaveHistory.reduce((sum, l) => sum + l.jours, 0);
+            const totalAvailable = currentBalance.principal + currentBalance.cinquieme + 
+                                 currentBalance.fractionnement + currentBalance.anciennete + 
+                                 currentBalance.enfant + currentBalance.report;
+            const remaining = totalAvailable - totalTaken;
+            
+            message += `<br><br>💰 <strong>Solde restant estimé :</strong> ${remaining} jours`;
+            
+            if (remaining < 5) {
+                message += `<br>⚠️ Attention, votre solde est faible. Planifiez bien vos prochaines périodes.`;
+            }
+            
+            updateAIMessage(message, 'success');
         }
 
         function cancelSelection() {
@@ -1346,7 +1552,35 @@
             const optimizations = generateOptimizations(start, end, workDays);
             renderOptimizations(optimizations);
             
-            updateAIMessage(`🎯 J'ai trouvé ${optimizations.length} optimisation(s) pour votre période !`, 'success');
+            let message = `🎯 J'ai analysé votre sélection et trouvé ${optimizations.length} optimisation(s) possible(s) !`;
+            
+            // Conseils personnalisés selon la période
+            const month = start.getMonth();
+            if (month >= 4 && month <= 9) {
+                message += '<br><br>☀️ <strong>Période estivale détectée</strong> : Parfait pour votre période principale. ';
+                if (workDays >= 12) {
+                    message += 'Vous respectez la condition des 12 jours continus pour le fractionnement !';
+                } else {
+                    message += `Pensez à prendre au moins 12 jours continus pour être éligible au fractionnement.`;
+                }
+            } else {
+                message += '<br><br>❄️ <strong>Période hivernale</strong> : Excellente stratégie pour optimiser le fractionnement !';
+            }
+            
+            updateAIMessage(message, 'success');
+            
+            // Suggestions supplémentaires
+            if (optimizations.length > 0) {
+                optimizations.forEach(opt => {
+                    if (opt.gain > 0) {
+                        addAISuggestion(
+                            opt.title,
+                            opt.description,
+                            () => applyOptimization(optimizations.indexOf(opt))
+                        );
+                    }
+                });
+            }
         }
 
         function generateOptimizations(start, end, currentDays) {
@@ -1522,6 +1756,191 @@
 
         function applyOptimization(index) {
             updateAIMessage(`✅ Optimisation appliquée ! Consultez le calendrier pour voir les modifications.`, 'success');
+        }
+
+        // ===== PLANIFICATION ANNUELLE =====
+        function suggestBridges() {
+            const currentYear = new Date().getFullYear();
+            const bridges = [];
+            
+            JOURS_FERIES_2025.forEach(holiday => {
+                const holidayDate = new Date(holiday.date);
+                const dayOfWeek = holidayDate.getDay();
+                
+                if (dayOfWeek === 4) { // Jeudi
+                    const friday = new Date(holidayDate);
+                    friday.setDate(friday.getDate() + 1);
+                    bridges.push({
+                        name: holiday.nom,
+                        date: holidayDate,
+                        suggestion: `Prenez le ${formatDisplayDate(formatDate(holidayDate))} pour avoir 4 jours de repos (jeudi + vendredi + weekend)`,
+                        daysNeeded: 1,
+                        totalDays: 4
+                    });
+                } else if (dayOfWeek === 2) { // Mardi
+                    const monday = new Date(holidayDate);
+                    monday.setDate(monday.getDate() - 1);
+                    bridges.push({
+                        name: holiday.nom,
+                        date: holidayDate,
+                        suggestion: `Prenez le ${formatDisplayDate(formatDate(monday))} pour avoir 4 jours de repos (lundi + mardi + weekend)`,
+                        daysNeeded: 1,
+                        totalDays: 4
+                    });
+                }
+            });
+            
+            if (bridges.length === 0) {
+                updateAIMessage('ℹ️ Aucun pont optimal détecté pour cette année. Les jours fériés ne tombent pas sur des jeudis ou mardis.', 'info');
+                return;
+            }
+            
+            let message = `🌉 <strong>Meilleurs ponts de l'année ${currentYear} :</strong><br><br>`;
+            bridges.forEach((bridge, index) => {
+                message += `${index + 1}. <strong>${bridge.name}</strong> (${formatDisplayDate(formatDate(bridge.date))})<br>`;
+                message += `   ${bridge.suggestion}<br>`;
+                message += `   → Gain : ${bridge.totalDays} jours de repos pour ${bridge.daysNeeded} jour de congé<br><br>`;
+            });
+            
+            updateAIMessage(message, 'success');
+        }
+
+        function suggestSummerPeriod() {
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            
+            // Suggérer une période estivale de 12 jours minimum
+            const suggestedStart = new Date(currentYear, 4, 15); // 15 mai
+            const suggestedEnd = new Date(currentYear, 4, 26); // 26 mai (12 jours ouvrables)
+            
+            const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
+            const lastOuvrable = getLastOuvrableBefore(new Date(suggestedEnd.getTime() + 86400000), weeklyRestDay);
+            const workDays = countOuvrables(suggestedStart, lastOuvrable, weeklyRestDay);
+            
+            let message = `☀️ <strong>Suggestion de période estivale pour le fractionnement :</strong><br><br>`;
+            message += `📅 <strong>Période recommandée :</strong> Du ${formatDisplayDate(formatDate(suggestedStart))} au ${formatDisplayDate(formatDate(suggestedEnd))}<br>`;
+            message += `📊 <strong>Jours ouvrables :</strong> ${workDays} jours<br><br>`;
+            message += `✅ Cette période vous permet de :<br>`;
+            message += `• Respecter la condition des 12 jours continus en été (mai-octobre)<br>`;
+            message += `• Être éligible au fractionnement si vous gardez 3-6 jours du principal pour l'hiver<br>`;
+            message += `• Profiter d'une belle période estivale<br><br>`;
+            message += `💡 <em>Vous pouvez ajuster cette période selon vos préférences, l'important est d'avoir au moins 12 jours continus entre le 1er mai et le 31 octobre.</em>`;
+            
+            updateAIMessage(message, 'success');
+            
+            addAISuggestion(
+                'Appliquer cette suggestion',
+                'Je peux sélectionner cette période sur le calendrier pour vous',
+                () => {
+                    selectedDates = [];
+                    let current = new Date(suggestedStart);
+                    while (current <= suggestedEnd) {
+                        selectedDates.push(formatDate(current));
+                        current.setDate(current.getDate() + 1);
+                    }
+                    renderCalendar();
+                    updateSelectionInfo();
+                    updateAIMessage('✅ Période estivale suggérée sélectionnée sur le calendrier !', 'success');
+                }
+            );
+        }
+
+        function suggestWinterPeriod() {
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            
+            // Suggérer une période hivernale de 3-6 jours
+            const suggestedStart = new Date(currentYear, 11, 23); // 23 décembre
+            const suggestedEnd = new Date(currentYear, 11, 27); // 27 décembre
+            
+            const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
+            const lastOuvrable = getLastOuvrableBefore(new Date(suggestedEnd.getTime() + 86400000), weeklyRestDay);
+            const workDays = countOuvrables(suggestedStart, lastOuvrable, weeklyRestDay);
+            
+            let message = `❄️ <strong>Suggestion de période hivernale pour optimiser le fractionnement :</strong><br><br>`;
+            message += `📅 <strong>Période recommandée :</strong> Du ${formatDisplayDate(formatDate(suggestedStart))} au ${formatDisplayDate(formatDate(suggestedEnd))}<br>`;
+            message += `📊 <strong>Jours ouvrables :</strong> ${workDays} jours<br><br>`;
+            message += `✅ Cette période vous permet de :<br>`;
+            message += `• Utiliser 3-6 jours du principal en période hivernale (novembre-avril)<br>`;
+            message += `• Obtenir +2 jours de fractionnement si vous avez 6 jours ou +1 jour si vous avez 3 jours<br>`;
+            message += `• Profiter des fêtes de fin d'année<br><br>`;
+            message += `💡 <em>L'idéal est de réserver 6 jours du principal (sur vos 24) pour l'hiver afin de maximiser le fractionnement.</em>`;
+            
+            updateAIMessage(message, 'success');
+            
+            addAISuggestion(
+                'Appliquer cette suggestion',
+                'Je peux sélectionner cette période sur le calendrier pour vous',
+                () => {
+                    selectedDates = [];
+                    let current = new Date(suggestedStart);
+                    while (current <= suggestedEnd) {
+                        selectedDates.push(formatDate(current));
+                        current.setDate(current.getDate() + 1);
+                    }
+                    renderCalendar();
+                    updateSelectionInfo();
+                    updateAIMessage('✅ Période hivernale suggérée sélectionnée sur le calendrier !', 'success');
+                }
+            );
+        }
+
+        function generateYearlyPlan() {
+            const annualRights = parseInt(document.getElementById('annualRights').value) || 30;
+            const totalDays = currentBalance.principal + currentBalance.cinquieme + 
+                            currentBalance.fractionnement + currentBalance.anciennete + 
+                            currentBalance.enfant + currentBalance.report;
+            
+            let message = `📊 <strong>Plan d'optimisation annuel personnalisé :</strong><br><br>`;
+            message += `📈 <strong>Votre situation actuelle :</strong><br>`;
+            message += `• Total de jours disponibles : ${totalDays} jours<br>`;
+            message += `• Principal : ${currentBalance.principal} jours<br>`;
+            message += `• 5ème semaine : ${currentBalance.cinquieme} jours<br>`;
+            message += `• Fractionnement actuel : ${currentBalance.fractionnement} jours<br><br>`;
+            
+            message += `🎯 <strong>Stratégie recommandée :</strong><br>`;
+            message += `1. <strong>Période estivale (Mai-Octobre) :</strong><br>`;
+            message += `   → Prenez au moins 12 jours continus du principal en été<br>`;
+            message += `   → Idéalement 18-20 jours pour profiter pleinement<br><br>`;
+            
+            message += `2. <strong>Période hivernale (Novembre-Avril) :</strong><br>`;
+            message += `   → Réservez 6 jours du principal pour l'hiver<br>`;
+            message += `   → Cela vous donnera +2 jours de fractionnement<br><br>`;
+            
+            message += `3. <strong>Optimisation des ponts :</strong><br>`;
+            message += `   → Utilisez les ponts pour maximiser vos weekends<br>`;
+            message += `   → 1 jour de congé peut donner 4 jours de repos<br><br>`;
+            
+            const potentialGain = 2; // Fractionnement maximum
+            message += `💰 <strong>Gain potentiel :</strong> +${potentialGain} jours de fractionnement si vous suivez cette stratégie !<br><br>`;
+            
+            message += `💡 <em>Utilisez les suggestions ci-dessus pour planifier vos périodes spécifiques.</em>`;
+            
+            updateAIMessage(message, 'success');
+            
+            // Analyser l'historique existant
+            if (leaveHistory.length > 0) {
+                let totalTaken = 0;
+                let summerTaken = 0;
+                let winterTaken = 0;
+                
+                leaveHistory.forEach(leave => {
+                    totalTaken += leave.jours;
+                    const start = new Date(leave.debut);
+                    const month = start.getMonth();
+                    if (month >= 4 && month <= 9) {
+                        summerTaken += leave.jours;
+                    } else {
+                        winterTaken += leave.jours;
+                    }
+                });
+                
+                addAISuggestion(
+                    'Analyse de votre historique',
+                    `Vous avez déjà pris ${totalTaken} jours (${summerTaken} en été, ${winterTaken} en hiver). Cliquez pour une analyse détaillée.`,
+                    () => analyzeHistory()
+                );
+            }
         }
 
         // ===== BALANCE =====
@@ -2089,6 +2508,27 @@
             
             calculateBalance();
             renderCalendar();
+            
+            // Suggestions initiales de l'IA
+            setTimeout(() => {
+                const totalDays = currentBalance.principal + currentBalance.cinquieme + 
+                                currentBalance.fractionnement + currentBalance.anciennete + 
+                                currentBalance.enfant + currentBalance.report;
+                
+                if (leaveHistory.length === 0) {
+                    addAISuggestion(
+                        'Commencer votre planification',
+                        'Je peux vous aider à planifier vos vacances sur toute l\'année. Cliquez sur "Générer un plan" dans la section Planification Annuelle.',
+                        () => generateYearlyPlan()
+                    );
+                } else {
+                    addAISuggestion(
+                        'Analyser votre historique',
+                        'J\'ai détecté des périodes enregistrées. Je peux analyser votre planification et vous donner des conseils d\'optimisation.',
+                        () => analyzeHistory()
+                    );
+                }
+            }, 1000);
         });
     </script>
 </body>
