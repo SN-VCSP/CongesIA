@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiCongés - Assistant IA pour vos Congés</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Couleurs Vinci/Eurovia */
+            --vinci-blue: #003366e3;
+            --vinci-blue-dark: #001F3F;
+            --vinci-blue-light: #004080;
+            --vinci-red: #E30613;
+            --vinci-red-dark: #C10510;
+            --vinci-orange: #FF6B35;
+            --vinci-white: #FFFFFF;
+            --vinci-gray: #F5F5F5;
+            --vinci-gray-dark: #666666;
+            --vinci-gray-light: #E0E0E0;
+            
+            /* Application des couleurs */
+            --primary: var(--vinci-blue);
+            --primary-dark: var(--vinci-blue-dark);
+            --secondary: var(--vinci-red);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: var(--vinci-red);
+            --bg: var(--vinci-gray);
+            --card: var(--vinci-white);
+            --text: var(--vinci-blue-dark);
+            --text-light: var(--vinci-gray-dark);
+            --border: var(--vinci-gray-light);
+            --gradient-1: linear-gradient(135deg, var(--vinci-blue) 0%, var(--vinci-blue-dark) 100%);
+            --gradient-2: linear-gradient(135deg, var(--vinci-red) 0%, var(--vinci-red-dark) 100%);
+            --gradient-3: linear-gradient(135deg, var(--vinci-blue-light) 0%, var(--vinci-blue) 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--gradient-1);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 51, 102, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: var(--vinci-red);
+            border-radius: 50%;
+            opacity: 0.1;
+            transform: translate(30%, -30%);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-container {
+            flex-shrink: 0;
+        }
+
+        .logo-eurovia {
+            max-height: 80px;
+            max-width: 200px;
+            height: auto;
+            width: auto;
+            filter: brightness(0) invert(1);
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            color: var(--vinci-white);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .ai-agent {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--vinci-blue);
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .ai-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 10px rgba(227, 6, 19, 0.3);
+        }
+
+        .ai-message {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid var(--vinci-blue);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            color: var(--vinci-blue);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+        }
+
+        .balance-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .balance-item {
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .balance-item.principal {
+            border-color: var(--vinci-blue);
+        }
+
+        .balance-item.cinquieme {
+            border-color: var(--vinci-red);
+        }
+
+        .balance-item.fractionnement {
+            border-color: var(--success);
+        }
+
+        .balance-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--vinci-blue);
+            margin: 10px 0;
+        }
+
+        .balance-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--vinci-blue);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--vinci-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--vinci-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 51, 102, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--vinci-red);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--vinci-red-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .simulation-result {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid var(--vinci-blue);
+        }
+
+        .simulation-result h4 {
+            color: var(--success);
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item strong {
+            color: var(--vinci-blue);
+        }
+
+        .analysis-box {
+            background: linear-gradient(135deg, rgba(0, 51, 102, 0.08) 0%, rgba(0, 31, 63, 0.08) 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid var(--vinci-blue);
+        }
+
+        .analysis-box h4 {
+            color: var(--vinci-blue);
+            margin-bottom: 15px;
+        }
+
+        .gain-loss {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .gain, .loss {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .gain {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--success);
+        }
+
+        .loss {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid var(--danger);
+        }
+
+        .gain-value, .loss-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .gain-value {
+            color: var(--success);
+        }
+
+        .loss-value {
+            color: var(--danger);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .history-table th {
+            background: var(--bg);
+            color: var(--vinci-blue);
+            font-weight: 600;
+        }
+
+        .history-table tr:hover {
+            background: var(--bg);
+        }
+
+        .history-table .btn {
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            white-space: nowrap;
+        }
+
+        .audit-alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .audit-alert.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--success);
+            color: #065f46;
+        }
+
+        .audit-alert.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning);
+            color: #92400e;
+        }
+
+        .audit-alert.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--danger);
+            color: #991b1b;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--vinci-blue);
+            border-bottom-color: var(--vinci-blue);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 51, 102, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--vinci-blue);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo-container {
+                margin-bottom: 15px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .balance-display {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .gain-loss {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #fef3c715 0%, #fde68a15 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .tip-box strong {
+            color: var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="logo-eurovia.png" alt="Logo Eurovia" class="logo-eurovia" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display: none; color: white; font-weight: bold; font-size: 1.5rem;">EUROVIA</div>
+                </div>
+                <div class="header-text">
+                    <h1>🎉 OptiCongés</h1>
+                    <p>Votre assistant IA intelligent pour optimiser vos congés CNETP</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="ai-agent">
+            <div class="ai-header">
+                <div class="ai-avatar">🤖</div>
+                <div>
+                    <h3>Assistant IA</h3>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Prêt à vous aider à optimiser vos congés</p>
+                </div>
+            </div>
+            <div id="aiMessage" class="ai-message">
+                Bonjour ! Je suis votre assistant IA pour la gestion des congés. Je peux vous aider à :
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>Simuler des prises de congés et optimiser votre planning</li>
+                    <li>Calculer intelligemment votre solde de congés</li>
+                    <li>Analyser votre historique et détecter les erreurs</li>
+                    <li>Expliquer clairement vos gains et pertes</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('balance')">📊 Mon Solde</button>
+            <button class="tab" onclick="switchTab('simulate')">🎯 Simulation</button>
+            <button class="tab" onclick="switchTab('history')">📅 Historique</button>
+            <button class="tab" onclick="switchTab('audit')">🔍 Audit</button>
+        </div>
+
+        <!-- Tab: Balance -->
+        <div id="balanceTab" class="tab-content active">
+            <div class="grid">
+                <div class="card">
+                    <h3><span class="card-icon">⚙️</span> Configuration</h3>
+                    <div class="form-group">
+                        <label>Droits annuels acquis (jours ouvrables)</label>
+                        <input type="number" id="annualRights" value="30" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>CP Ancienneté</label>
+                        <input type="number" id="anciennete" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>CP Enfant à charge</label>
+                        <input type="number" id="enfant" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Report (N-1)</label>
+                        <input type="number" id="report" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>5ème Semaine</label>
+                        <input type="number" id="cinquieme" value="6" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>CP Fractionnement</label>
+                        <input type="number" id="fractionnement" value="0" min="0">
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateBalance()">
+                        🔄 Calculer le Solde
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="card-icon">📈</span> Solde Actuel</h3>
+                    <div class="balance-display" id="balanceDisplay">
+                        <div class="balance-item principal">
+                            <div class="balance-label">Congé Principal</div>
+                            <div class="balance-value" id="balancePrincipal">24</div>
+                            <div class="balance-label">(jours 1-24)</div>
+                        </div>
+                        <div class="balance-item cinquieme">
+                            <div class="balance-label">5ème Semaine</div>
+                            <div class="balance-value" id="balanceCinquieme">6</div>
+                            <div class="balance-label">(jours 25-30)</div>
+                        </div>
+                        <div class="balance-item fractionnement">
+                            <div class="balance-label">Fractionnement</div>
+                            <div class="balance-value" id="balanceFractionnement">0</div>
+                            <div class="balance-label">(bonus)</div>
+                        </div>
+                        <div class="balance-item">
+                            <div class="balance-label">Ancienneté</div>
+                            <div class="balance-value" id="balanceAnciennete">0</div>
+                        </div>
+                        <div class="balance-item">
+                            <div class="balance-label">Enfant</div>
+                            <div class="balance-value" id="balanceEnfant">0</div>
+                        </div>
+                        <div class="balance-item">
+                            <div class="balance-label">Report</div>
+                            <div class="balance-value" id="balanceReport">0</div>
+                        </div>
+                    </div>
+                    <div class="analysis-box" id="balanceAnalysis" style="display: none;">
+                        <h4>💡 Analyse IA</h4>
+                        <div id="balanceAnalysisText"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Simulation -->
+        <div id="simulateTab" class="tab-content">
+            <div class="grid">
+                <div class="card">
+                    <h3><span class="card-icon">📅</span> Nouvelle Simulation</h3>
+                    <div class="form-group">
+                        <label>Date de début</label>
+                        <input type="date" id="simStartDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Date de fin</label>
+                        <input type="date" id="simEndDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Jour de repos hebdomadaire</label>
+                        <select id="weeklyRestDay">
+                            <option value="0">Dimanche</option>
+                            <option value="6">Samedi</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="simulateLeave()">
+                        🎯 Simuler cette prise
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="card-icon">📊</span> Résultat de la Simulation</h3>
+                    <div id="simulationResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: History -->
+        <div id="historyTab" class="tab-content">
+            <div class="grid">
+                <div class="card">
+                    <h3><span class="card-icon">➕</span> Ajouter une période de congé</h3>
+                    <div class="form-group">
+                        <label>Date de début</label>
+                        <input type="date" id="newLeaveStart">
+                    </div>
+                    <div class="form-group">
+                        <label>Date de fin</label>
+                        <input type="date" id="newLeaveEnd">
+                    </div>
+                    <div class="form-group">
+                        <label>Jour de repos hebdomadaire</label>
+                        <select id="newLeaveRestDay">
+                            <option value="0">Dimanche</option>
+                            <option value="6">Samedi</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre de jours (optionnel - sera calculé automatiquement)</label>
+                        <input type="number" id="newLeaveDays" min="0" placeholder="Laisser vide pour calcul automatique">
+                    </div>
+                    <button class="btn btn-primary" onclick="addLeavePeriod()">
+                        ➕ Ajouter cette période
+                    </button>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--border);">
+                        <h4 style="color: var(--vinci-blue); margin-bottom: 15px;">📥 Import JSON (optionnel)</h4>
+                        <div class="form-group">
+                            <label>Importer un historique en JSON</label>
+                            <textarea id="historyInput" rows="3" placeholder='[{"debut": "2024-05-15", "fin": "2024-05-20", "jours": 5}]'></textarea>
+                        </div>
+                        <button class="btn btn-secondary" onclick="importHistory()">
+                            📥 Importer depuis JSON
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><span class="card-icon">📋</span> Historique enregistré</h3>
+                    <div id="historyTableContainer" style="margin-top: 20px;">
+                        <p style="color: var(--text-light); text-align: center; padding: 20px;">
+                            Aucune période de congé enregistrée. Ajoutez votre première période ci-contre.
+                        </p>
+                    </div>
+                    <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-success" onclick="analyzeHistory()" id="analyzeBtn" style="display: none;">
+                            🧠 Analyser avec l'IA
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearHistory()" id="clearBtn" style="display: none;">
+                            🗑️ Effacer tout l'historique
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportHistory()" id="exportBtn" style="display: none;">
+                            💾 Exporter en JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Audit -->
+        <div id="auditTab" class="tab-content">
+            <div class="card">
+                <h3><span class="card-icon">🔍</span> Audit Annuel</h3>
+                <p style="margin-bottom: 20px; color: var(--text-light);">
+                    Vérifiez que votre décompte de jours sur l'année est correct.
+                </p>
+                <button class="btn btn-primary" onclick="runAudit()">
+                    🔍 Lancer l'audit
+                </button>
+                <div id="auditResults" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // État global
+        let currentBalance = {
+            anciennete: 0,
+            enfant: 0,
+            report: 0,
+            cinquieme: 6,
+            fractionnement: 0,
+            principal: 24
+        };
+
+        let leaveHistory = [];
+
+        // Jours fériés France (simplifié)
+        const publicHolidays = [
+            '2024-01-01', '2024-04-01', '2024-05-01', '2024-05-08', '2024-05-09',
+            '2024-05-20', '2024-07-14', '2024-08-15', '2024-11-01', '2024-11-11',
+            '2024-12-25', '2025-01-01', '2025-04-21', '2025-05-01', '2025-05-08',
+            '2025-05-29', '2025-06-09', '2025-07-14', '2025-08-15', '2025-11-01',
+            '2025-11-11', '2025-12-25'
+        ];
+
+        // Fonctions utilitaires
+        function isOuvrable(date, weeklyRestDay = 0) {
+            const day = date.getDay();
+            if (day === weeklyRestDay) return false;
+            
+            const dateStr = date.toISOString().split('T')[0];
+            if (publicHolidays.includes(dateStr)) return false;
+            
+            return true;
+        }
+
+        function countOuvrables(start, end, weeklyRestDay = 0) {
+            let count = 0;
+            const current = new Date(start);
+            const endDate = new Date(end);
+            
+            while (current <= endDate) {
+                if (isOuvrable(current, weeklyRestDay)) {
+                    count++;
+                }
+                current.setDate(current.getDate() + 1);
+            }
+            return count;
+        }
+
+        function getLastOuvrableBefore(reprise, weeklyRestDay = 0) {
+            let d = new Date(reprise);
+            d.setDate(d.getDate() - 1);
+            while (!isOuvrable(d, weeklyRestDay)) {
+                d.setDate(d.getDate() - 1);
+            }
+            return d;
+        }
+
+        // Imputation selon l'ordre CNETP
+        function imputeDays(rights, daysNeeded) {
+            const remaining = {...rights};
+            const consumed = {
+                ANCIENNETE: 0,
+                ENFANT: 0,
+                REPORT: 0,
+                CINQUIEME: 0,
+                FRACTIONNEMENT: 0,
+                PRINCIPAL: 0
+            };
+
+            let leftToConsume = daysNeeded;
+            const order = ['anciennete', 'enfant', 'report', 'cinquieme', 'fractionnement', 'principal'];
+            const orderMap = {
+                'anciennete': 'ANCIENNETE',
+                'enfant': 'ENFANT',
+                'report': 'REPORT',
+                'cinquieme': 'CINQUIEME',
+                'fractionnement': 'FRACTIONNEMENT',
+                'principal': 'PRINCIPAL'
+            };
+
+            for (const type of order) {
+                if (leftToConsume <= 0) break;
+                const available = remaining[type];
+                const toConsume = Math.min(available, leftToConsume);
+                remaining[type] -= toConsume;
+                consumed[orderMap[type]] = toConsume;
+                leftToConsume -= toConsume;
+            }
+
+            return { remaining, consumed, totalConsumed: daysNeeded - leftToConsume };
+        }
+
+        // Calcul du fractionnement
+        function calculateFractionnement(params) {
+            if (params.annualRightsAcquired < 15) return 0;
+            
+            if (!params.isContinuous12Summer && !params.allLeavesInWinter) {
+                return 0;
+            }
+
+            const daysSubjectToBonus = params.principalDaysTakenWinter;
+            if (daysSubjectToBonus >= 6) return 2;
+            if (daysSubjectToBonus >= 3) return 1;
+            return 0;
+        }
+
+        // Interface
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        function updateAIMessage(message, type = 'info') {
+            const aiMessage = document.getElementById('aiMessage');
+            aiMessage.innerHTML = message;
+            aiMessage.style.borderLeftColor = type === 'success' ? 'var(--success)' : 
+                                             type === 'warning' ? 'var(--warning)' : 
+                                             type === 'error' ? 'var(--danger)' : 'var(--vinci-blue)';
+        }
+
+        function calculateBalance() {
+            currentBalance = {
+                anciennete: parseInt(document.getElementById('anciennete').value) || 0,
+                enfant: parseInt(document.getElementById('enfant').value) || 0,
+                report: parseInt(document.getElementById('report').value) || 0,
+                cinquieme: parseInt(document.getElementById('cinquieme').value) || 6,
+                fractionnement: parseInt(document.getElementById('fractionnement').value) || 0,
+                principal: 24
+            };
+
+            // Mise à jour de l'affichage
+            document.getElementById('balancePrincipal').textContent = currentBalance.principal;
+            document.getElementById('balanceCinquieme').textContent = currentBalance.cinquieme;
+            document.getElementById('balanceFractionnement').textContent = currentBalance.fractionnement;
+            document.getElementById('balanceAnciennete').textContent = currentBalance.anciennete;
+            document.getElementById('balanceEnfant').textContent = currentBalance.enfant;
+            document.getElementById('balanceReport').textContent = currentBalance.report;
+
+            // Analyse IA
+            const total = currentBalance.principal + currentBalance.cinquieme + 
+                         currentBalance.fractionnement + currentBalance.anciennete + 
+                         currentBalance.enfant + currentBalance.report;
+            
+            let analysis = `<strong>📊 Votre solde total : ${total} jours ouvrables</strong><br><br>`;
+            
+            if (currentBalance.fractionnement > 0) {
+                analysis += `✅ <strong>Excellent !</strong> Vous bénéficiez de ${currentBalance.fractionnement} jour(s) de fractionnement. Cela signifie que vous avez bien optimisé votre prise de congés en laissant des jours pour l'hiver.<br><br>`;
+            }
+            
+            if (currentBalance.principal < 12) {
+                analysis += `⚠️ <strong>Attention :</strong> Vous avez moins de 12 jours de congé principal restants. Assurez-vous d'avoir pris au moins 12 jours continus en été (Mai-Oct) pour être éligible au fractionnement l'année prochaine.<br><br>`;
+            }
+            
+            if (currentBalance.cinquieme > 0) {
+                analysis += `💡 <strong>Conseil :</strong> Vous avez ${currentBalance.cinquieme} jour(s) de 5ème semaine. Utilisez-les avant qu'ils ne soient perdus !<br><br>`;
+            }
+
+            analysis += `<strong>💼 Répartition :</strong><br>`;
+            analysis += `• Congé Principal : ${currentBalance.principal} jours (base)<br>`;
+            analysis += `• 5ème Semaine : ${currentBalance.cinquieme} jours<br>`;
+            if (currentBalance.fractionnement > 0) {
+                analysis += `• Fractionnement : ${currentBalance.fractionnement} jours (bonus) 🎁<br>`;
+            }
+            if (currentBalance.anciennete > 0) {
+                analysis += `• Ancienneté : ${currentBalance.anciennete} jours<br>`;
+            }
+            if (currentBalance.enfant > 0) {
+                analysis += `• Enfant : ${currentBalance.enfant} jours<br>`;
+            }
+            if (currentBalance.report > 0) {
+                analysis += `• Report : ${currentBalance.report} jours<br>`;
+            }
+
+            document.getElementById('balanceAnalysisText').innerHTML = analysis;
+            document.getElementById('balanceAnalysis').style.display = 'block';
+
+            updateAIMessage(`✅ Solde calculé ! Vous avez <strong>${total} jours ouvrables</strong> disponibles. ${currentBalance.fractionnement > 0 ? 'Bravo pour le fractionnement ! 🎉' : 'Pensez à optimiser pour obtenir le fractionnement.'}`, 'success');
+        }
+
+        function simulateLeave() {
+            const startDate = document.getElementById('simStartDate').value;
+            const endDate = document.getElementById('simEndDate').value;
+            const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value);
+
+            if (!startDate || !endDate) {
+                updateAIMessage('❌ Veuillez sélectionner les dates de début et de fin.', 'error');
+                return;
+            }
+
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const reprise = new Date(end);
+            reprise.setDate(reprise.getDate() + 1);
+
+            // Calcul selon règles CNETP
+            const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
+            const joursOuvrables = countOuvrables(start, lastOuvrable, weeklyRestDay);
+
+            // Simulation de consommation
+            const simulation = imputeDays(currentBalance, joursOuvrables);
+
+            // Affichage du résultat
+            let resultHTML = `
+                <div class="simulation-result">
+                    <h4>📊 Résultat de la simulation</h4>
+                    <div class="result-item">
+                        <span><strong>Période :</strong></span>
+                        <span>${startDate} → ${endDate}</span>
+                    </div>
+                    <div class="result-item">
+                        <span><strong>Jours ouvrables consommés :</strong></span>
+                        <span>${joursOuvrables} jours</span>
+                    </div>
+                    <div class="result-item">
+                        <span><strong>Dernier jour ouvrable :</strong></span>
+                        <span>${lastOuvrable.toISOString().split('T')[0]}</span>
+                    </div>
+                </div>
+
+                <div class="analysis-box">
+                    <h4>💡 Détail de l'imputation</h4>
+                    <div class="result-item">
+                        <span>Ancienneté :</span>
+                        <span>${simulation.consumed.ANCIENNETE} jour(s)</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Enfant :</span>
+                        <span>${simulation.consumed.ENFANT} jour(s)</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Report :</span>
+                        <span>${simulation.consumed.REPORT} jour(s)</span>
+                    </div>
+                    <div class="result-item">
+                        <span>5ème Semaine :</span>
+                        <span>${simulation.consumed.CINQUIEME} jour(s)</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Fractionnement :</span>
+                        <span>${simulation.consumed.FRACTIONNEMENT} jour(s)</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Congé Principal :</span>
+                        <span>${simulation.consumed.PRINCIPAL} jour(s)</span>
+                    </div>
+                </div>
+
+                <div class="gain-loss">
+                    <div class="gain">
+                        <div class="gain-label">✅ Solde après simulation</div>
+                        <div class="gain-value">${simulation.remaining.principal + simulation.remaining.cinquieme + simulation.remaining.fractionnement + simulation.remaining.anciennete + simulation.remaining.enfant + simulation.remaining.report} jours</div>
+                    </div>
+                    <div class="loss">
+                        <div class="loss-label">📉 Jours consommés</div>
+                        <div class="loss-value">${joursOuvrables} jours</div>
+                    </div>
+                </div>
+            `;
+
+            // Analyse IA
+            let aiAnalysis = `<strong>🎯 Analyse de votre simulation :</strong><br><br>`;
+            
+            if (simulation.consumed.FRACTIONNEMENT > 0) {
+                aiAnalysis += `⚠️ <strong>Attention :</strong> Vous consommez ${simulation.consumed.FRACTIONNEMENT} jour(s) de fractionnement. C'est un bonus précieux, assurez-vous que c'est nécessaire.<br><br>`;
+            }
+            
+            if (simulation.consumed.CINQUIEME > 0) {
+                aiAnalysis += `💡 <strong>Bonne stratégie :</strong> Vous utilisez ${simulation.consumed.CINQUIEME} jour(s) de 5ème semaine. C'est bien de les utiliser avant qu'ils ne soient perdus.<br><br>`;
+            }
+
+            const month = start.getMonth() + 1;
+            if (month >= 5 && month <= 10) {
+                aiAnalysis += `☀️ <strong>Période estivale :</strong> Cette prise est en période estivale (Mai-Oct). C'est bien pour respecter la règle des 12 jours continus en été.<br><br>`;
+            } else {
+                aiAnalysis += `❄️ <strong>Période hivernale :</strong> Cette prise est en période hivernale (Nov-Avr). Cela peut vous aider à obtenir le fractionnement si vous laissez 3-6 jours du principal pour l'hiver.<br><br>`;
+            }
+
+            aiAnalysis += `<strong>📊 Après cette simulation, votre nouveau solde sera :</strong><br>`;
+            aiAnalysis += `• Principal : ${simulation.remaining.principal} jours<br>`;
+            aiAnalysis += `• 5ème Semaine : ${simulation.remaining.cinquieme} jours<br>`;
+            aiAnalysis += `• Fractionnement : ${simulation.remaining.fractionnement} jours<br>`;
+            aiAnalysis += `• Total : ${simulation.remaining.principal + simulation.remaining.cinquieme + simulation.remaining.fractionnement + simulation.remaining.anciennete + simulation.remaining.enfant + simulation.remaining.report} jours<br>`;
+
+            resultHTML += `<div class="analysis-box">${aiAnalysis}</div>`;
+
+            document.getElementById('simulationResult').innerHTML = resultHTML;
+            updateAIMessage(`✅ Simulation terminée ! Cette prise consommera <strong>${joursOuvrables} jours ouvrables</strong>. ${simulation.consumed.FRACTIONNEMENT > 0 ? 'Attention, vous consommez du fractionnement.' : 'Bonne optimisation !'}`, 'success');
+        }
+
+        function importHistory() {
+            const input = document.getElementById('historyInput').value.trim();
+            if (!input) {
+                updateAIMessage('❌ Veuillez entrer un historique JSON.', 'error');
+                return;
+            }
+
+            try {
+                const imported = JSON.parse(input);
+                if (Array.isArray(imported)) {
+                    // Fusionner avec l'historique existant
+                    leaveHistory = [...leaveHistory, ...imported];
+                    displayHistory();
+                    updateAIMessage(`✅ Historique importé avec succès ! ${imported.length} période(s) ajoutée(s). Total : ${leaveHistory.length} période(s).`, 'success');
+                    document.getElementById('historyInput').value = '';
+                } else {
+                    updateAIMessage('❌ Le format JSON doit être un tableau (array).', 'error');
+                }
+            } catch (e) {
+                updateAIMessage('❌ Format JSON invalide. Veuillez vérifier votre saisie.', 'error');
+            }
+        }
+
+        function displayHistory() {
+            const container = document.getElementById('historyTableContainer');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            
+            if (leaveHistory.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 20px;">Aucune période de congé enregistrée. Ajoutez votre première période ci-contre.</p>';
+                analyzeBtn.style.display = 'none';
+                clearBtn.style.display = 'none';
+                exportBtn.style.display = 'none';
+                return;
+            }
+
+            // Trier par date de début
+            leaveHistory.sort((a, b) => new Date(a.debut) - new Date(b.debut));
+
+            analyzeBtn.style.display = 'inline-flex';
+            clearBtn.style.display = 'inline-flex';
+            exportBtn.style.display = 'inline-flex';
+
+            let html = `
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date début</th>
+                            <th>Date fin</th>
+                            <th>Jours ouvrables</th>
+                            <th>Période</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            leaveHistory.forEach((leave, index) => {
+                const period = getPeriodType(leave.debut);
+                html += `
+                    <tr>
+                        <td>${formatDate(leave.debut)}</td>
+                        <td>${formatDate(leave.fin)}</td>
+                        <td><strong>${leave.jours || 'N/A'}</strong></td>
+                        <td>${period}</td>
+                        <td>
+                            <button class="btn" onclick="removeLeavePeriod(${index})" style="padding: 6px 12px; font-size: 0.85rem; background: var(--vinci-red); color: white;">
+                                🗑️ Supprimer
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        function addLeavePeriod() {
+            const startDate = document.getElementById('newLeaveStart').value;
+            const endDate = document.getElementById('newLeaveEnd').value;
+            const joursDeclares = document.getElementById('newLeaveDays').value;
+
+            if (!startDate || !endDate) {
+                updateAIMessage('❌ Veuillez sélectionner les dates de début et de fin.', 'error');
+                return;
+            }
+
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (start > end) {
+                updateAIMessage('❌ La date de début doit être antérieure à la date de fin.', 'error');
+                return;
+            }
+
+            // Calcul automatique des jours ouvrables
+            const weeklyRestDay = parseInt(document.getElementById('newLeaveRestDay').value) || 0;
+            const reprise = new Date(end);
+            reprise.setDate(reprise.getDate() + 1);
+            const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
+            const joursOuvrables = countOuvrables(start, lastOuvrable, weeklyRestDay);
+
+            const newLeave = {
+                debut: startDate,
+                fin: endDate,
+                jours: joursDeclares ? parseInt(joursDeclares) : joursOuvrables
+            };
+
+            leaveHistory.push(newLeave);
+            displayHistory();
+
+            // Réinitialiser le formulaire
+            document.getElementById('newLeaveStart').value = '';
+            document.getElementById('newLeaveEnd').value = '';
+            document.getElementById('newLeaveDays').value = '';
+            // Garder le jour de repos pour la prochaine saisie
+
+            updateAIMessage(`✅ Période ajoutée ! ${joursOuvrables} jour(s) ouvrable(s) calculé(s) automatiquement pour la période ${formatDate(startDate)} → ${formatDate(endDate)}.`, 'success');
+        }
+
+        function removeLeavePeriod(index) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette période de congé ?')) {
+                leaveHistory.splice(index, 1);
+                displayHistory();
+                updateAIMessage('✅ Période supprimée avec succès.', 'success');
+            }
+        }
+
+        function clearHistory() {
+            if (confirm('Êtes-vous sûr de vouloir effacer tout l\'historique ? Cette action est irréversible.')) {
+                leaveHistory = [];
+                displayHistory();
+                updateAIMessage('✅ Historique effacé.', 'success');
+            }
+        }
+
+        function exportHistory() {
+            const json = JSON.stringify(leaveHistory, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'historique-conges.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            updateAIMessage('✅ Historique exporté en JSON avec succès !', 'success');
+        }
+
+        function getPeriodType(dateStr) {
+            const date = new Date(dateStr);
+            const month = date.getMonth() + 1;
+            if (month >= 5 && month <= 10) return '☀️ Été';
+            return '❄️ Hiver';
+        }
+
+        function analyzeHistory() {
+            if (leaveHistory.length === 0) {
+                updateAIMessage('❌ Veuillez d\'abord ajouter des périodes de congé à votre historique.', 'error');
+                return;
+            }
+
+            // Analyse intelligente
+            let totalDays = 0;
+            let summerDays = 0;
+            let winterDays = 0;
+            let continuousSummer = false;
+            let maxContinuous = 0;
+            let currentContinuous = 0;
+
+            leaveHistory.forEach(leave => {
+                const jours = leave.jours || 0;
+                totalDays += jours;
+                
+                const period = getPeriodType(leave.debut);
+                if (period === '☀️ Été') {
+                    summerDays += jours;
+                    currentContinuous += jours;
+                    maxContinuous = Math.max(maxContinuous, currentContinuous);
+                    if (currentContinuous >= 12) continuousSummer = true;
+                } else {
+                    winterDays += jours;
+                    currentContinuous = 0;
+                }
+            });
+
+            const annualRights = parseInt(document.getElementById('annualRights').value) || 30;
+            const principalRemaining = 24 - (totalDays > 24 ? 24 : totalDays);
+            const winterPrincipal = Math.min(winterDays, principalRemaining);
+
+            const fractionnement = calculateFractionnement({
+                annualRightsAcquired: annualRights,
+                principalDaysTakenSummer: summerDays,
+                principalDaysTakenWinter: winterPrincipal,
+                isContinuous12Summer: continuousSummer,
+                allLeavesInWinter: summerDays === 0 && totalDays > 0
+            });
+
+            let analysis = `
+                <div class="analysis-box">
+                    <h4>🧠 Analyse IA de votre historique</h4>
+                    <div class="result-item">
+                        <span><strong>Total jours pris :</strong></span>
+                        <span>${totalDays} jours</span>
+                    </div>
+                    <div class="result-item">
+                        <span><strong>Jours en été (Mai-Oct) :</strong></span>
+                        <span>${summerDays} jours</span>
+                    </div>
+                    <div class="result-item">
+                        <span><strong>Jours en hiver (Nov-Avr) :</strong></span>
+                        <span>${winterDays} jours</span>
+                    </div>
+                    <div class="result-item">
+                        <span><strong>Plus longue période continue en été :</strong></span>
+                        <span>${maxContinuous} jours</span>
+                    </div>
+                    <div class="result-item">
+                        <span><strong>12 jours continus en été :</strong></span>
+                        <span>${continuousSummer ? '✅ Oui' : '❌ Non'}</span>
+                    </div>
+                </div>
+
+                <div class="gain-loss">
+                    <div class="gain">
+                        <div class="gain-label">🎁 Fractionnement estimé</div>
+                        <div class="gain-value">+${fractionnement} jour(s)</div>
+                    </div>
+                    <div class="loss">
+                        <div class="loss-label">📊 Solde principal restant</div>
+                        <div class="loss-value">${principalRemaining} jours</div>
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <strong>💡 Recommandations de l'IA :</strong><br>
+            `;
+
+            if (!continuousSummer && summerDays < 12) {
+                analysis += `⚠️ Vous n'avez pas pris 12 jours continus en été. Pour être éligible au fractionnement, vous devez prendre au moins 12 jours continus entre le 1er mai et le 31 octobre.<br>`;
+            }
+
+            if (winterPrincipal >= 6) {
+                analysis += `✅ Excellent ! Vous avez ${winterPrincipal} jours du principal à prendre en hiver. Cela vous donne droit à +2 jours de fractionnement !<br>`;
+            } else if (winterPrincipal >= 3) {
+                analysis += `✅ Bien ! Vous avez ${winterPrincipal} jours du principal à prendre en hiver. Cela vous donne droit à +1 jour de fractionnement.<br>`;
+            } else {
+                analysis += `💡 Pour optimiser, essayez de laisser 3-6 jours du principal (sur les 24) pour la période hivernale afin d'obtenir le fractionnement.<br>`;
+            }
+
+            if (fractionnement === 0 && annualRights >= 15) {
+                analysis += `📌 Vous êtes éligible au fractionnement (droits >= 15j) mais vous ne l'obtenez pas encore. Optimisez votre planning !<br>`;
+            }
+
+            analysis += `</div>`;
+
+            // Ajouter l'analyse après le tableau (sans écraser le tableau)
+            const container = document.getElementById('historyTableContainer');
+            // Supprimer l'ancienne analyse si elle existe
+            const oldAnalysis = container.querySelector('.analysis-box');
+            if (oldAnalysis) {
+                oldAnalysis.remove();
+            }
+            // Ajouter la nouvelle analyse
+            container.insertAdjacentHTML('beforeend', analysis);
+            updateAIMessage(`✅ Analyse terminée ! ${fractionnement > 0 ? `Vous bénéficiez de ${fractionnement} jour(s) de fractionnement. 🎉` : 'Optimisez votre planning pour obtenir le fractionnement.'}`, 'success');
+        }
+
+        function runAudit() {
+            if (leaveHistory.length === 0) {
+                updateAIMessage('❌ Veuillez d\'abord ajouter des périodes de congé à votre historique pour l\'audit.', 'error');
+                return;
+            }
+
+            const container = document.getElementById('auditResults');
+            let issues = [];
+            let warnings = [];
+            let totalCalculated = 0;
+
+            leaveHistory.forEach((leave, index) => {
+                const start = new Date(leave.debut);
+                const end = new Date(leave.fin);
+                const reprise = new Date(end);
+                reprise.setDate(reprise.getDate() + 1);
+                
+                const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
+                const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
+                const calculatedDays = countOuvrables(start, lastOuvrable, weeklyRestDay);
+                totalCalculated += calculatedDays;
+
+                if (leave.jours) {
+                    const diff = Math.abs(calculatedDays - leave.jours);
+                    if (diff > 0) {
+                        issues.push({
+                            period: `${leave.debut} → ${leave.fin}`,
+                            declared: leave.jours,
+                            calculated: calculatedDays,
+                            diff: diff
+                        });
+                    }
+                } else {
+                    warnings.push({
+                        period: `${leave.debut} → ${leave.fin}`,
+                        calculated: calculatedDays
+                    });
+                }
+            });
+
+            let html = '';
+
+            if (issues.length === 0 && warnings.length === 0) {
+                html = `
+                    <div class="audit-alert success">
+                        <span style="font-size: 1.5rem;">✅</span>
+                        <div>
+                            <strong>Audit réussi !</strong><br>
+                            Aucune erreur détectée dans votre décompte. Total calculé : ${totalCalculated} jours ouvrables.
+                        </div>
+                    </div>
+                `;
+            } else {
+                if (issues.length > 0) {
+                    html += `
+                        <div class="audit-alert error">
+                            <span style="font-size: 1.5rem;">❌</span>
+                            <div>
+                                <strong>${issues.length} erreur(s) détectée(s) :</strong><br>
+                                <ul style="margin-top: 10px; margin-left: 20px;">
+                    `;
+                    issues.forEach(issue => {
+                        html += `<li>Période ${issue.period} : Déclaré ${issue.declared} jours, Calculé ${issue.calculated} jours (différence: ${issue.diff} jour(s))</li>`;
+                    });
+                    html += `</ul></div></div>`;
+                }
+
+                if (warnings.length > 0) {
+                    html += `
+                        <div class="audit-alert warning">
+                            <span style="font-size: 1.5rem;">⚠️</span>
+                            <div>
+                                <strong>${warnings.length} période(s) sans nombre de jours déclaré :</strong><br>
+                                <ul style="margin-top: 10px; margin-left: 20px;">
+                    `;
+                    warnings.forEach(warning => {
+                        html += `<li>Période ${warning.period} : Calculé ${warning.calculated} jours ouvrables</li>`;
+                    });
+                    html += `</ul></div></div>`;
+                }
+            }
+
+            html += `
+                <div class="analysis-box" style="margin-top: 20px;">
+                    <h4>📊 Résumé de l'audit</h4>
+                    <div class="result-item">
+                        <span><strong>Total jours calculés :</strong></span>
+                        <span>${totalCalculated} jours ouvrables</span>
+                    </div>
+                    <div class="result-item">
+                        <span><strong>Erreurs détectées :</strong></span>
+                        <span>${issues.length}</span>
+                    </div>
+                    <div class="result-item">
+                        <span><strong>Avertissements :</strong></span>
+                        <span>${warnings.length}</span>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+            updateAIMessage(`🔍 Audit terminé ! ${issues.length} erreur(s) détectée(s), ${warnings.length} avertissement(s).`, issues.length > 0 ? 'error' : 'warning');
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const nextWeek = new Date(today);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            
+            document.getElementById('simStartDate').value = today.toISOString().split('T')[0];
+            document.getElementById('simEndDate').value = nextWeek.toISOString().split('T')[0];
+            
+            calculateBalance();
+        });
+    </script>
+</body>
+</html>
