@@ -1305,12 +1305,18 @@
         }
 
         function calculateFractionnement(params) {
+            // Règles CNETP pour le fractionnement (3 conditions cumulatives) :
+            // 1. Droits annuels >= 15 jours
+            // 2. 12 jours continus en été (1er mai - 31 octobre) du principal
+            // 3. 3-6 jours du principal en hiver (1er novembre - 30 avril)
+            
+            // Condition 1 : Droits annuels >= 15
             if (params.annualRightsAcquired < 15) return 0;
             
-            if (!params.isContinuous12Summer && !params.allLeavesInWinter) {
-                return 0;
-            }
-
+            // Condition 2 : 12 jours continus en été du principal
+            if (!params.isContinuous12Summer) return 0;
+            
+            // Condition 3 : 3-6 jours du principal en hiver
             const daysSubjectToBonus = params.principalDaysTakenWinter;
             if (daysSubjectToBonus >= 6) return 2;
             if (daysSubjectToBonus >= 3) return 1;
@@ -1427,9 +1433,10 @@
                 cell.classList.add('other-month');
             }
 
-            // Weekend
+            // Weekend - En CNETP, seul le dimanche est non ouvrable (sauf si c'est le jour de repos hebdomadaire)
             const dayOfWeek = date.getDay();
-            if (dayOfWeek === 0 || dayOfWeek === 6) {
+            const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
+            if (dayOfWeek === weeklyRestDay) {
                 cell.classList.add('weekend');
             }
 
@@ -1497,19 +1504,30 @@
                     return;
                 }
                 
+                // Calculer le dernier jour ouvrable avant la reprise
+                const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
+                const reprise = new Date(end);
+                reprise.setDate(reprise.getDate() + 1);
+                const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
+                
+                // Générer toutes les dates de la période (du début à la fin sélectionnée)
                 selectedDates = [];
                 let current = new Date(start);
+                const endDate = new Date(end);
                 
-                while (current <= end) {
+                while (current <= endDate) {
                     selectedDates.push(formatDate(current));
                     current.setDate(current.getDate() + 1);
                 }
                 
+                // Calculer les jours ouvrables jusqu'au dernier jour ouvrable avant la reprise
+                const workDays = countOuvrables(start, lastOuvrable, weeklyRestDay);
+                
                 // Ajouter cette période à la liste des périodes en attente
-                const workDays = countWorkDaysFromDates(selectedDates);
                 pendingPeriods.push({
                     start: formatDate(new Date(start)),
                     end: formatDate(end),
+                    lastOuvrable: formatDate(lastOuvrable),
                     dates: [...selectedDates],
                     jours: workDays
                 });
@@ -1541,7 +1559,8 @@
                 if (selectedDates.length > 0 && selectionMode && rangeStart) {
                     const start = selectedDates[0];
                     const end = selectedDates.length > 1 ? selectedDates[selectedDates.length - 1] : start;
-                    const workDays = countWorkDaysFromDates(selectedDates);
+                    const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
+                    const workDays = countWorkDaysFromDates(selectedDates, weeklyRestDay);
                     
                     html += `
                         <div class="period-item" style="border-color: var(--warning);">
@@ -1555,11 +1574,12 @@
                 
                 // Périodes en attente de validation
                 pendingPeriods.forEach((period, index) => {
+                    const lastOuvrableInfo = period.lastOuvrable ? ` (dernier ouvrable: ${formatDisplayDate(period.lastOuvrable)})` : '';
                     html += `
                         <div class="period-item">
                             <div class="period-info">
                                 <div class="period-dates">📅 Du ${formatDisplayDate(period.start)} au ${formatDisplayDate(period.end)}</div>
-                                <div class="period-days">${period.jours} jours ouvrables</div>
+                                <div class="period-days">${period.jours} jours ouvrables${lastOuvrableInfo}</div>
                             </div>
                             <div class="period-actions">
                                 <button class="btn btn-success btn-small" onclick="confirmSinglePeriod(${index})">✓ Valider</button>
@@ -1608,12 +1628,13 @@
             renderCalendar();
             renderHistoryTable();
             updateStats();
+            calculateBalance(); // Recalculer le solde avec le fractionnement mis à jour
             
             // Message intelligent
             let message = `✅ <strong>${addedCount} période(s) ajoutée(s) avec succès !</strong><br><br>`;
             message += `📊 Total : ${totalDays} jours ouvrables consommés<br><br>`;
             
-            // Calculer le solde restant
+            // Calculer le solde restant (après recalcul)
             const totalTaken = leaveHistory.reduce((sum, l) => sum + l.jours, 0);
             const totalAvailable = currentBalance.principal + currentBalance.cinquieme + 
                                  currentBalance.fractionnement + currentBalance.anciennete + 
@@ -1650,6 +1671,7 @@
             renderCalendar();
             renderHistoryTable();
             updateStats();
+            calculateBalance(); // Recalculer le solde avec le fractionnement mis à jour
             updateSelectionInfo();
             
             // Message intelligent avec conseils
@@ -1758,11 +1780,12 @@
             
             if (selectedDates.length > 0 && selectionMode) {
                 // Période en cours de sélection
+                const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
                 periodToOptimize = {
                     start: selectedDates[0],
                     end: selectedDates[selectedDates.length - 1],
                     dates: selectedDates,
-                    jours: countWorkDaysFromDates(selectedDates)
+                    jours: countWorkDaysFromDates(selectedDates, weeklyRestDay)
                 };
             } else if (pendingPeriods.length > 0) {
                 // Utiliser la dernière période en attente
@@ -2289,10 +2312,11 @@
             const reprise = new Date(end);
             reprise.setDate(reprise.getDate() + 1);
             
+            // Le dernier jour de congé est le dernier jour ouvrable avant la reprise
             const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
             const calculatedDays = manualDays ? parseInt(manualDays) : countOuvrables(start, lastOuvrable, weeklyRestDay);
 
-            // Générer les dates de la période
+            // Générer les dates de la période (du début à la fin sélectionnée)
             const dates = [];
             let current = new Date(start);
             while (current <= end) {
@@ -2310,12 +2334,13 @@
             renderHistoryTable();
             renderCalendar();
             updateStats();
+            calculateBalance(); // Recalculer le solde avec le fractionnement mis à jour
             
             document.getElementById('newLeaveStart').value = '';
             document.getElementById('newLeaveEnd').value = '';
             document.getElementById('newLeaveDays').value = '';
 
-            updateAIMessage(`✅ Période ajoutée ! ${calculatedDays} jours ouvrables enregistrés.`, 'success');
+            updateAIMessage(`✅ Période ajoutée ! ${calculatedDays} jours ouvrables enregistrés (dernier jour ouvrable: ${formatDisplayDate(formatDate(lastOuvrable))}).`, 'success');
         }
 
         function renderHistoryTable() {
@@ -2470,14 +2495,18 @@
                 }
             });
 
+            // Calculer les jours du principal pris en été et en hiver
+            const principalDaysTaken = Math.min(totalDays, 24);
+            const principalDaysTakenSummer = Math.min(summerDays, principalDaysTaken);
+            const principalDaysTakenWinter = principalDaysTaken - principalDaysTakenSummer;
+            
             const annualRights = parseInt(document.getElementById('annualRights').value) || 30;
-            const principalRemaining = 24 - (totalDays > 24 ? 24 : totalDays);
-            const winterPrincipal = Math.min(winterDays, principalRemaining);
+            const principalRemaining = 24 - principalDaysTaken;
 
             const fractionnement = calculateFractionnement({
                 annualRightsAcquired: annualRights,
-                principalDaysTakenSummer: summerDays,
-                principalDaysTakenWinter: winterPrincipal,
+                principalDaysTakenSummer: principalDaysTakenSummer,
+                principalDaysTakenWinter: principalDaysTakenWinter,
                 isContinuous12Summer: continuousSummer,
                 allLeavesInWinter: summerDays === 0 && totalDays > 0
             });
@@ -2496,6 +2525,14 @@
                     <div class="result-item">
                         <span><strong>Jours en hiver (Nov-Avr) :</strong></span>
                         <span>${winterDays} jours</span>
+                    </div>
+                    <div class="result-item">
+                        <span><strong>Jours du principal en été :</strong></span>
+                        <span>${principalDaysTakenSummer} jours</span>
+                    </div>
+                    <div class="result-item">
+                        <span><strong>Jours du principal en hiver :</strong></span>
+                        <span>${principalDaysTakenWinter} jours</span>
                     </div>
                     <div class="result-item">
                         <span><strong>Plus longue période continue en été :</strong></span>
@@ -2522,14 +2559,14 @@
                     <strong>💡 Recommandations de l'IA :</strong><br>
             `;
 
-            if (!continuousSummer && summerDays < 12) {
-                analysis += `⚠️ Vous n'avez pas pris 12 jours continus en été. Pour être éligible au fractionnement, vous devez prendre au moins 12 jours continus entre le 1er mai et le 31 octobre.<br>`;
+            if (!continuousSummer) {
+                analysis += `⚠️ Vous n'avez pas pris 12 jours continus en été. Pour être éligible au fractionnement, vous devez prendre au moins 12 jours continus du principal entre le 1er mai et le 31 octobre.<br>`;
             }
 
-            if (winterPrincipal >= 6) {
-                analysis += `✅ Excellent ! Vous avez ${winterPrincipal} jours du principal à prendre en hiver. Cela vous donne droit à +2 jours de fractionnement !<br>`;
-            } else if (winterPrincipal >= 3) {
-                analysis += `✅ Bien ! Vous avez ${winterPrincipal} jours du principal à prendre en hiver. Cela vous donne droit à +1 jour de fractionnement.<br>`;
+            if (principalDaysTakenWinter >= 6) {
+                analysis += `✅ Excellent ! Vous avez ${principalDaysTakenWinter} jours du principal en hiver. Cela vous donne droit à +2 jours de fractionnement !<br>`;
+            } else if (principalDaysTakenWinter >= 3) {
+                analysis += `✅ Bien ! Vous avez ${principalDaysTakenWinter} jours du principal en hiver. Cela vous donne droit à +1 jour de fractionnement.<br>`;
             } else {
                 analysis += `💡 Pour optimiser, essayez de laisser 3-6 jours du principal (sur les 24) pour la période hivernale afin d'obtenir le fractionnement.<br>`;
             }
@@ -2667,29 +2704,69 @@
             if (leaveHistory.length === 0) return 0;
 
             let summerDays = 0;
-            let winterDays = 0;
+            let winterPrincipalDays = 0; // Seulement les jours du principal en hiver
+            let maxContinuousSummer = 0;
+            let currentContinuousSummer = 0;
             let has12ContinuousSummer = false;
+            
+            // Calculer le total des jours pris
+            const totalDaysTaken = leaveHistory.reduce((sum, l) => sum + l.jours, 0);
+            
+            // Calculer combien de jours du principal ont été pris
+            const principalDaysTaken = Math.min(totalDaysTaken, 24);
             
             leaveHistory.forEach(leave => {
                 const start = new Date(leave.debut);
                 const month = start.getMonth();
+                const jours = leave.jours;
                 
+                // Période estivale (1er mai - 31 octobre)
                 if (month >= 4 && month <= 9) {
-                    summerDays += leave.jours;
-                    if (leave.jours >= 12) has12ContinuousSummer = true;
+                    summerDays += jours;
+                    currentContinuousSummer += jours;
+                    if (currentContinuousSummer > maxContinuousSummer) {
+                        maxContinuousSummer = currentContinuousSummer;
+                    }
+                    if (currentContinuousSummer >= 12) {
+                        has12ContinuousSummer = true;
+                    }
                 } else {
-                    winterDays += leave.jours;
+                    // Période hivernale (1er novembre - 30 avril)
+                    // Seulement compter les jours du principal (pas la 5ème semaine)
+                    // On doit calculer combien de jours du principal sont pris en hiver
+                    currentContinuousSummer = 0;
                 }
             });
-
+            
+            // Calculer les jours du principal pris en hiver
+            // Si on a pris moins de 24 jours au total, tous les jours d'hiver sont du principal
+            // Sinon, on doit calculer la proportion
+            if (totalDaysTaken <= 24) {
+                // Tous les jours d'hiver sont du principal
+                winterPrincipalDays = totalDaysTaken - summerDays;
+            } else {
+                // On a pris plus de 24 jours, donc on doit calculer combien du principal en hiver
+                const principalDaysInSummer = Math.min(summerDays, 24);
+                const principalDaysInWinter = 24 - principalDaysInSummer;
+                // Calculer la proportion des jours d'hiver qui sont du principal
+                const winterDaysTotal = totalDaysTaken - summerDays;
+                if (winterDaysTotal > 0) {
+                    // Proportion du principal restant
+                    winterPrincipalDays = Math.min(principalDaysInWinter, winterDaysTotal);
+                }
+            }
+            
+            // Calculer les jours du principal pris en été (pour le fractionnement)
+            const principalDaysTakenSummer = Math.min(summerDays, 24);
+            
             const annualRights = parseInt(document.getElementById('annualRights').value) || 30;
             
             return calculateFractionnement({
                 annualRightsAcquired: annualRights,
-                principalDaysTakenSummer: summerDays,
-                principalDaysTakenWinter: winterDays,
+                principalDaysTakenSummer: principalDaysTakenSummer,
+                principalDaysTakenWinter: winterPrincipalDays,
                 isContinuous12Summer: has12ContinuousSummer,
-                allLeavesInWinter: summerDays === 0 && winterDays > 0
+                allLeavesInWinter: summerDays === 0 && totalDaysTaken > 0
             });
         }
 
@@ -2713,18 +2790,23 @@
             return JOURS_FERIES_2025.some(h => h.date === dateStr);
         }
 
-        function isWeekend(date) {
+        function isWeekend(date, weeklyRestDay = 0) {
             const day = new Date(date).getDay();
-            return day === 0 || day === 6;
+            // En CNETP, seul le dimanche est non ouvrable (sauf si c'est le jour de repos hebdomadaire)
+            // Le samedi est un jour ouvrable
+            return day === weeklyRestDay;
         }
 
         function hasLeaveOnDate(dateStr) {
             return leaveHistory.some(leave => leave.dates && leave.dates.includes(dateStr));
         }
 
-        function countWorkDaysFromDates(dates) {
+        function countWorkDaysFromDates(dates, weeklyRestDay = 0) {
+            // En CNETP, les jours ouvrables sont du lundi au samedi (6 jours/semaine)
+            // Seul le dimanche (ou le jour de repos hebdomadaire) et les jours fériés sont non ouvrables
             return dates.filter(date => {
-                return !isWeekend(date) && !isHoliday(date);
+                const dateObj = new Date(date);
+                return isOuvrable(dateObj, weeklyRestDay);
             }).length;
         }
 
