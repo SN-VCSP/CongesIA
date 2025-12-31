@@ -673,20 +673,78 @@
             border-radius: 15px;
             padding: 20px;
             margin: 20px 0;
+        }
+
+        .selection-header {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--vinci-blue);
+        }
+
+        .periods-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .period-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .period-item:hover {
+            border-color: var(--vinci-blue);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .period-info {
+            flex: 1;
+        }
+
+        .period-dates {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--vinci-blue);
+            margin-bottom: 5px;
+        }
+
+        .period-days {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .period-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .selection-summary {
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
             text-align: center;
         }
 
-        .selection-dates {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--vinci-blue);
-            margin: 10px 0;
-        }
-
-        .selection-days {
-            font-size: 1.5rem;
+        .selection-total {
+            font-size: 1.3rem;
             font-weight: bold;
             color: var(--vinci-red);
+            margin-top: 8px;
         }
 
         /* Optimisations IA */
@@ -890,18 +948,32 @@
                     </div>
 
                     <div id="selectionInfo" class="selection-info" style="display: none;">
-                        <div>📍 Sélection en cours</div>
-                        <div class="selection-dates" id="selectionDates"></div>
-                        <div class="selection-days" id="selectionDays"></div>
-                        <button class="btn btn-success" onclick="confirmSelection()">✓ Valider la sélection</button>
-                        <button class="btn btn-danger" onclick="cancelSelection()">✗ Annuler</button>
+                        <div class="selection-header">📍 Périodes sélectionnées</div>
+                        <div id="periodsList" class="periods-list"></div>
+                        <div class="selection-summary">
+                            <div style="font-size: 0.9rem; color: var(--text-light);">Total de jours ouvrables</div>
+                            <div class="selection-total" id="selectionTotal">0 jours</div>
+                        </div>
+                        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+                            <button class="btn btn-success" onclick="confirmAllSelections()">✓ Valider toutes les périodes</button>
+                            <button class="btn btn-warning" onclick="clearAllSelections()">🗑️ Effacer toutes les sélections</button>
+                        </div>
                     </div>
 
                     <div class="calendar-grid" id="calendarGrid"></div>
 
+                    <div style="margin-top: 20px; padding: 15px; background: var(--bg); border-radius: 10px; border-left: 4px solid var(--vinci-blue);">
+                        <div style="font-weight: bold; color: var(--vinci-blue); margin-bottom: 8px;">💡 Comment planifier plusieurs périodes :</div>
+                        <div style="font-size: 0.9rem; color: var(--text-light); line-height: 1.6;">
+                            1. Cliquez sur une date de début<br>
+                            2. Cliquez sur une date de fin pour créer une période<br>
+                            3. Répétez pour ajouter d'autres périodes<br>
+                            4. Validez toutes les périodes en une fois ou individuellement
+                        </div>
+                    </div>
                     <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="btn btn-primary" onclick="optimizeSelection()">🎯 Optimiser ma sélection</button>
-                        <button class="btn btn-warning" onclick="clearSelection()">🗑️ Effacer sélection</button>
+                        <button class="btn btn-primary" onclick="optimizeSelection()">🎯 Optimiser la période</button>
+                        <button class="btn btn-warning" onclick="clearSelection()">🗑️ Effacer sélection en cours</button>
                     </div>
                 </div>
 
@@ -1159,9 +1231,10 @@
         
         // État du calendrier
         let currentDate = new Date();
-        let selectedDates = [];
+        let selectedDates = []; // Dates de la période en cours de sélection
         let selectionMode = false;
         let rangeStart = null;
+        let pendingPeriods = []; // Toutes les périodes en attente de validation
 
         // ===== FONCTIONS UTILITAIRES CNETP =====
         function isOuvrable(date, weeklyRestDay = 0) {
@@ -1365,12 +1438,19 @@
                 cell.classList.add('holiday');
             }
 
-            // Sélectionné
+            // Sélectionné (période en cours)
             if (selectedDates.includes(dateStr)) {
                 cell.classList.add('selected');
             }
 
-            // Range selection
+            // Périodes en attente
+            pendingPeriods.forEach(period => {
+                if (period.dates && period.dates.includes(dateStr)) {
+                    cell.classList.add('selected');
+                }
+            });
+
+            // Range selection (période en cours de sélection)
             if (rangeStart && selectionMode) {
                 const start = new Date(rangeStart);
                 if (date >= start) {
@@ -1401,15 +1481,21 @@
 
         function selectDate(dateStr, date) {
             if (!selectionMode) {
-                // Premier clic
+                // Premier clic - début d'une nouvelle période
                 rangeStart = dateStr;
                 selectionMode = true;
                 selectedDates = [dateStr];
                 updateSelectionInfo();
             } else {
-                // Deuxième clic
+                // Deuxième clic - fin de la période
                 const start = new Date(rangeStart);
                 const end = date;
+                
+                // Vérifier que la fin est après le début
+                if (end < start) {
+                    updateAIMessage('⚠️ La date de fin doit être après la date de début', 'warning');
+                    return;
+                }
                 
                 selectedDates = [];
                 let current = new Date(start);
@@ -1419,6 +1505,20 @@
                     current.setDate(current.getDate() + 1);
                 }
                 
+                // Ajouter cette période à la liste des périodes en attente
+                const workDays = countWorkDaysFromDates(selectedDates);
+                pendingPeriods.push({
+                    start: formatDate(new Date(start)),
+                    end: formatDate(end),
+                    dates: [...selectedDates],
+                    jours: workDays
+                });
+                
+                // Réinitialiser pour la prochaine sélection
+                selectedDates = [];
+                rangeStart = null;
+                selectionMode = false;
+                
                 updateSelectionInfo();
             }
             
@@ -1427,39 +1527,80 @@
 
         function updateSelectionInfo() {
             const info = document.getElementById('selectionInfo');
+            const periodsList = document.getElementById('periodsList');
+            const selectionTotal = document.getElementById('selectionTotal');
             
-            if (selectedDates.length > 0) {
+            // Afficher si on a des périodes en attente ou une sélection en cours
+            if (pendingPeriods.length > 0 || (selectedDates.length > 0 && selectionMode)) {
                 info.style.display = 'block';
                 
-                const start = selectedDates[0];
-                const end = selectedDates[selectedDates.length - 1];
-                const workDays = countWorkDaysFromDates(selectedDates);
+                // Afficher la période en cours de sélection si elle existe
+                let html = '';
                 
-                document.getElementById('selectionDates').textContent = 
-                    `Du ${formatDisplayDate(start)} au ${formatDisplayDate(end)}`;
-                document.getElementById('selectionDays').textContent = 
-                    `${workDays} jours ouvrables`;
+                // Période en cours de sélection (si pas encore complétée)
+                if (selectedDates.length > 0 && selectionMode && rangeStart) {
+                    const start = selectedDates[0];
+                    const end = selectedDates.length > 1 ? selectedDates[selectedDates.length - 1] : start;
+                    const workDays = countWorkDaysFromDates(selectedDates);
+                    
+                    html += `
+                        <div class="period-item" style="border-color: var(--warning);">
+                            <div class="period-info">
+                                <div class="period-dates">⏳ En cours : Du ${formatDisplayDate(start)} au ${formatDisplayDate(end)}</div>
+                                <div class="period-days">${workDays} jours ouvrables - Cliquez sur une date de fin pour finaliser</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Périodes en attente de validation
+                pendingPeriods.forEach((period, index) => {
+                    html += `
+                        <div class="period-item">
+                            <div class="period-info">
+                                <div class="period-dates">📅 Du ${formatDisplayDate(period.start)} au ${formatDisplayDate(period.end)}</div>
+                                <div class="period-days">${period.jours} jours ouvrables</div>
+                            </div>
+                            <div class="period-actions">
+                                <button class="btn btn-success btn-small" onclick="confirmSinglePeriod(${index})">✓ Valider</button>
+                                <button class="btn btn-danger btn-small" onclick="removePendingPeriod(${index})">✗ Supprimer</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                periodsList.innerHTML = html;
+                
+                // Calculer le total
+                const totalDays = pendingPeriods.reduce((sum, p) => sum + p.jours, 0);
+                selectionTotal.textContent = `${totalDays} jours ouvrables`;
             } else {
                 info.style.display = 'none';
             }
         }
 
-        function confirmSelection() {
-            if (selectedDates.length === 0) return;
+        function confirmAllSelections() {
+            if (pendingPeriods.length === 0) {
+                updateAIMessage('⚠️ Aucune période à valider. Sélectionnez d\'abord des périodes sur le calendrier.', 'warning');
+                return;
+            }
             
-            const start = selectedDates[0];
-            const end = selectedDates[selectedDates.length - 1];
-            const workDays = countWorkDaysFromDates(selectedDates);
-            const startDate = new Date(start);
-            const month = startDate.getMonth();
+            let totalDays = 0;
+            let addedCount = 0;
             
-            leaveHistory.push({
-                debut: start,
-                fin: end,
-                jours: workDays,
-                dates: [...selectedDates]
+            pendingPeriods.forEach(period => {
+                leaveHistory.push({
+                    debut: period.start,
+                    fin: period.end,
+                    jours: period.jours,
+                    dates: [...period.dates]
+                });
+                totalDays += period.jours;
+                addedCount++;
             });
             
+            // Réinitialiser
+            pendingPeriods = [];
             selectedDates = [];
             rangeStart = null;
             selectionMode = false;
@@ -1468,15 +1609,58 @@
             renderHistoryTable();
             updateStats();
             
+            // Message intelligent
+            let message = `✅ <strong>${addedCount} période(s) ajoutée(s) avec succès !</strong><br><br>`;
+            message += `📊 Total : ${totalDays} jours ouvrables consommés<br><br>`;
+            
+            // Calculer le solde restant
+            const totalTaken = leaveHistory.reduce((sum, l) => sum + l.jours, 0);
+            const totalAvailable = currentBalance.principal + currentBalance.cinquieme + 
+                                 currentBalance.fractionnement + currentBalance.anciennete + 
+                                 currentBalance.enfant + currentBalance.report;
+            const remaining = totalAvailable - totalTaken;
+            
+            message += `💰 <strong>Solde restant estimé :</strong> ${remaining} jours`;
+            
+            if (remaining < 5) {
+                message += `<br>⚠️ Attention, votre solde est faible. Planifiez bien vos prochaines périodes.`;
+            }
+            
+            updateAIMessage(message, 'success');
+            updateSelectionInfo();
+        }
+
+        function confirmSinglePeriod(index) {
+            if (index < 0 || index >= pendingPeriods.length) return;
+            
+            const period = pendingPeriods[index];
+            const startDate = new Date(period.start);
+            const month = startDate.getMonth();
+            
+            leaveHistory.push({
+                debut: period.start,
+                fin: period.end,
+                jours: period.jours,
+                dates: [...period.dates]
+            });
+            
+            // Retirer de la liste des périodes en attente
+            pendingPeriods.splice(index, 1);
+            
+            renderCalendar();
+            renderHistoryTable();
+            updateStats();
+            updateSelectionInfo();
+            
             // Message intelligent avec conseils
             let message = `✅ <strong>Période ajoutée avec succès !</strong><br><br>`;
-            message += `📅 Du ${formatDisplayDate(start)} au ${formatDisplayDate(end)}<br>`;
-            message += `📊 ${workDays} jours ouvrables consommés<br><br>`;
+            message += `📅 Du ${formatDisplayDate(period.start)} au ${formatDisplayDate(period.end)}<br>`;
+            message += `📊 ${period.jours} jours ouvrables consommés<br><br>`;
             
             // Conseils selon la période
             if (month >= 4 && month <= 9) {
                 message += `☀️ <strong>Période estivale</strong> : `;
-                if (workDays >= 12) {
+                if (period.jours >= 12) {
                     message += `Excellent ! Vous respectez la condition des 12 jours continus pour le fractionnement.`;
                 } else {
                     message += `Pensez à prendre au moins 12 jours continus en été pour être éligible au fractionnement.`;
@@ -1512,6 +1696,18 @@
             updateAIMessage(message, 'success');
         }
 
+        function removePendingPeriod(index) {
+            if (index < 0 || index >= pendingPeriods.length) return;
+            
+            pendingPeriods.splice(index, 1);
+            renderCalendar();
+            updateSelectionInfo();
+            
+            if (pendingPeriods.length === 0 && !selectionMode) {
+                updateAIMessage('ℹ️ Période supprimée. Vous pouvez continuer à sélectionner d\'autres périodes.', 'info');
+            }
+        }
+
         function cancelSelection() {
             selectedDates = [];
             rangeStart = null;
@@ -1528,6 +1724,23 @@
             updateSelectionInfo();
         }
 
+        function clearAllSelections() {
+            if (pendingPeriods.length === 0 && !selectionMode) {
+                updateAIMessage('ℹ️ Aucune sélection en cours.', 'info');
+                return;
+            }
+            
+            if (confirm('Êtes-vous sûr de vouloir effacer toutes les périodes sélectionnées ?')) {
+                pendingPeriods = [];
+                selectedDates = [];
+                rangeStart = null;
+                selectionMode = false;
+                renderCalendar();
+                updateSelectionInfo();
+                updateAIMessage('✅ Toutes les sélections ont été effacées.', 'success');
+            }
+        }
+
         function previousMonth() {
             currentDate.setMonth(currentDate.getMonth() - 1);
             renderCalendar();
@@ -1540,19 +1753,33 @@
 
         // ===== OPTIMISATIONS IA =====
         function optimizeSelection() {
-            if (selectedDates.length === 0) {
+            // Utiliser la période en cours de sélection ou la dernière période en attente
+            let periodToOptimize = null;
+            
+            if (selectedDates.length > 0 && selectionMode) {
+                // Période en cours de sélection
+                periodToOptimize = {
+                    start: selectedDates[0],
+                    end: selectedDates[selectedDates.length - 1],
+                    dates: selectedDates,
+                    jours: countWorkDaysFromDates(selectedDates)
+                };
+            } else if (pendingPeriods.length > 0) {
+                // Utiliser la dernière période en attente
+                periodToOptimize = pendingPeriods[pendingPeriods.length - 1];
+            } else {
                 updateAIMessage('⚠️ Veuillez d\'abord sélectionner une période sur le calendrier', 'warning');
                 return;
             }
 
-            const start = new Date(selectedDates[0]);
-            const end = new Date(selectedDates[selectedDates.length - 1]);
-            const workDays = countWorkDaysFromDates(selectedDates);
+            const start = new Date(periodToOptimize.start);
+            const end = new Date(periodToOptimize.end);
+            const workDays = periodToOptimize.jours;
             
             const optimizations = generateOptimizations(start, end, workDays);
             renderOptimizations(optimizations);
             
-            let message = `🎯 J'ai analysé votre sélection et trouvé ${optimizations.length} optimisation(s) possible(s) !`;
+            let message = `🎯 J'ai analysé votre période et trouvé ${optimizations.length} optimisation(s) possible(s) !`;
             
             // Conseils personnalisés selon la période
             const month = start.getMonth();
@@ -1561,10 +1788,14 @@
                 if (workDays >= 12) {
                     message += 'Vous respectez la condition des 12 jours continus pour le fractionnement !';
                 } else {
-                    message += `Pensez à prendre au moins 12 jours continus pour être éligible au fractionnement.`;
+                    message += `Pensez à prendre au moins 12 jours continus en été pour être éligible au fractionnement.`;
                 }
             } else {
                 message += '<br><br>❄️ <strong>Période hivernale</strong> : Excellente stratégie pour optimiser le fractionnement !';
+            }
+            
+            if (pendingPeriods.length > 1) {
+                message += `<br><br>💡 Vous avez ${pendingPeriods.length} périodes en attente. Vous pouvez optimiser chaque période individuellement.`;
             }
             
             updateAIMessage(message, 'success');
