@@ -653,6 +653,28 @@
             border-color: var(--vinci-blue);
         }
 
+        .calendar-day.suggested {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid var(--warning);
+            position: relative;
+        }
+
+        .calendar-day.suggested::after {
+            content: '💡';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.7rem;
+        }
+
+        .calendar-day.suggested-start,
+        .calendar-day.suggested-end {
+            background: linear-gradient(135deg, var(--warning), #f59e0b);
+            color: white;
+            font-weight: bold;
+            border: 2px solid var(--vinci-blue);
+        }
+
         .day-number {
             font-size: 0.85rem;
             font-weight: 600;
@@ -974,6 +996,13 @@
                     <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-primary" onclick="optimizeSelection()">🎯 Optimiser la période</button>
                         <button class="btn btn-warning" onclick="clearSelection()">🗑️ Effacer sélection en cours</button>
+                        <button class="btn btn-secondary" onclick="clearSuggestions()" id="clearSuggestionsBtn" style="display: none;">🗑️ Effacer suggestions</button>
+                    </div>
+                    <div id="suggestionsInfo" style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 10px; border-left: 4px solid var(--warning); display: none;">
+                        <div style="font-weight: bold; color: var(--vinci-blue); margin-bottom: 5px;">💡 Périodes suggérées affichées</div>
+                        <div style="font-size: 0.9rem; color: var(--text-light);">
+                            Les périodes en <strong>jaune/orange</strong> sont des suggestions de l'IA. Cliquez directement sur une période suggérée pour l'ajouter à votre planning.
+                        </div>
                     </div>
                 </div>
 
@@ -1235,6 +1264,7 @@
         let selectionMode = false;
         let rangeStart = null;
         let pendingPeriods = []; // Toutes les périodes en attente de validation
+        let suggestedPeriods = []; // Périodes suggérées par l'IA pour visualisation
 
         // ===== FONCTIONS UTILITAIRES CNETP =====
         function isOuvrable(date, weeklyRestDay = 0) {
@@ -1469,6 +1499,20 @@
                 }
             }
 
+            // Périodes suggérées par l'IA
+            suggestedPeriods.forEach((suggestion, suggestionIndex) => {
+                if (suggestion.dates && suggestion.dates.includes(dateStr)) {
+                    if (dateStr === suggestion.start || dateStr === suggestion.end) {
+                        cell.classList.add('suggested-start', 'suggested-end');
+                    } else {
+                        cell.classList.add('suggested');
+                    }
+                    // Permettre de cliquer sur une période suggérée pour l'appliquer
+                    cell.style.cursor = 'pointer';
+                    cell.title = `💡 ${suggestion.name || 'Période suggérée'} - Cliquez pour ajouter`;
+                }
+            });
+
             const dayNumber = document.createElement('div');
             dayNumber.className = 'day-number';
             dayNumber.textContent = day;
@@ -1481,7 +1525,21 @@
                 cell.appendChild(indicator);
             }
 
-            cell.onclick = () => selectDate(dateStr, date);
+            // Gérer le clic : si c'est une période suggérée, l'appliquer directement
+            cell.onclick = () => {
+                // Vérifier si on clique sur une période suggérée
+                const clickedSuggestion = suggestedPeriods.find(suggestion => 
+                    suggestion.dates && suggestion.dates.includes(dateStr)
+                );
+                
+                if (clickedSuggestion) {
+                    // Appliquer la suggestion
+                    applySuggestion(clickedSuggestion.start, clickedSuggestion.end, clickedSuggestion.dates);
+                } else {
+                    // Comportement normal de sélection
+                    selectDate(dateStr, date);
+                }
+            };
 
             return cell;
         }
@@ -1763,6 +1821,14 @@
             }
         }
 
+        function clearSuggestions() {
+            suggestedPeriods = [];
+            renderCalendar();
+            document.getElementById('suggestionsInfo').style.display = 'none';
+            document.getElementById('clearSuggestionsBtn').style.display = 'none';
+            updateAIMessage('✅ Suggestions effacées du calendrier.', 'success');
+        }
+
         function previousMonth() {
             currentDate.setMonth(currentDate.getMonth() - 1);
             renderCalendar();
@@ -2012,6 +2078,44 @@
             updateAIMessage(`✅ Optimisation appliquée ! Consultez le calendrier pour voir les modifications.`, 'success');
         }
 
+        // Fonction pour appliquer une suggestion sur le calendrier
+        function applySuggestion(startStr, endStr, dates) {
+            // Ajouter la période aux périodes en attente
+            const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
+            const start = new Date(startStr);
+            const end = new Date(endStr);
+            const reprise = new Date(end);
+            reprise.setDate(reprise.getDate() + 1);
+            const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
+            const workDays = countOuvrables(start, lastOuvrable, weeklyRestDay);
+            
+            pendingPeriods.push({
+                start: startStr,
+                end: endStr,
+                lastOuvrable: formatDate(lastOuvrable),
+                dates: dates,
+                jours: workDays
+            });
+            
+            // Retirer cette suggestion de la liste (mais garder les autres)
+            suggestedPeriods = suggestedPeriods.filter(s => 
+                !(s.start === startStr && s.end === endStr)
+            );
+            
+            // Si plus de suggestions, cacher l'info
+            if (suggestedPeriods.length === 0) {
+                document.getElementById('suggestionsInfo').style.display = 'none';
+                document.getElementById('clearSuggestionsBtn').style.display = 'none';
+            }
+            
+            // Naviguer vers le mois de la période
+            currentDate = new Date(start);
+            renderCalendar();
+            updateSelectionInfo();
+            
+            updateAIMessage(`✅ Période suggérée ajoutée à votre planning ! Du ${formatDisplayDate(startStr)} au ${formatDisplayDate(endStr)} (${workDays} jours ouvrables).`, 'success');
+        }
+
         // ===== PLANIFICATION ANNUELLE =====
         function suggestBridges() {
             const currentYear = new Date().getFullYear();
@@ -2024,20 +2128,48 @@
                 if (dayOfWeek === 4) { // Jeudi
                     const friday = new Date(holidayDate);
                     friday.setDate(friday.getDate() + 1);
+                    const startDate = formatDate(holidayDate);
+                    const endDate = formatDate(friday);
+                    
+                    // Générer les dates
+                    const dates = [];
+                    let current = new Date(holidayDate);
+                    while (current <= friday) {
+                        dates.push(formatDate(current));
+                        current.setDate(current.getDate() + 1);
+                    }
+                    
                     bridges.push({
                         name: holiday.nom,
                         date: holidayDate,
-                        suggestion: `Prenez le ${formatDisplayDate(formatDate(holidayDate))} pour avoir 4 jours de repos (jeudi + vendredi + weekend)`,
+                        start: startDate,
+                        end: endDate,
+                        dates: dates,
+                        suggestion: `Prenez le ${formatDisplayDate(startDate)} pour avoir 4 jours de repos (jeudi + vendredi + weekend)`,
                         daysNeeded: 1,
                         totalDays: 4
                     });
                 } else if (dayOfWeek === 2) { // Mardi
                     const monday = new Date(holidayDate);
                     monday.setDate(monday.getDate() - 1);
+                    const startDate = formatDate(monday);
+                    const endDate = formatDate(holidayDate);
+                    
+                    // Générer les dates
+                    const dates = [];
+                    let current = new Date(monday);
+                    while (current <= holidayDate) {
+                        dates.push(formatDate(current));
+                        current.setDate(current.getDate() + 1);
+                    }
+                    
                     bridges.push({
                         name: holiday.nom,
                         date: holidayDate,
-                        suggestion: `Prenez le ${formatDisplayDate(formatDate(monday))} pour avoir 4 jours de repos (lundi + mardi + weekend)`,
+                        start: startDate,
+                        end: endDate,
+                        dates: dates,
+                        suggestion: `Prenez le ${formatDisplayDate(startDate)} pour avoir 4 jours de repos (lundi + mardi + weekend)`,
                         daysNeeded: 1,
                         totalDays: 4
                     });
@@ -2049,14 +2181,44 @@
                 return;
             }
             
+            // Afficher les suggestions sur le calendrier
+            suggestedPeriods = bridges.map(bridge => ({
+                start: bridge.start,
+                end: bridge.end,
+                dates: bridge.dates,
+                type: 'bridge',
+                name: bridge.name
+            }));
+            
+            // Afficher l'info et le bouton pour effacer
+            document.getElementById('suggestionsInfo').style.display = 'block';
+            document.getElementById('clearSuggestionsBtn').style.display = 'inline-flex';
+            
+            // Naviguer vers le premier pont
+            if (bridges.length > 0) {
+                const firstBridge = bridges[0];
+                currentDate = new Date(firstBridge.date);
+                renderCalendar();
+            }
+            
             let message = `🌉 <strong>Meilleurs ponts de l'année ${currentYear} :</strong><br><br>`;
             bridges.forEach((bridge, index) => {
-                message += `${index + 1}. <strong>${bridge.name}</strong> (${formatDisplayDate(formatDate(bridge.date))})<br>`;
+                message += `${index + 1}. <strong>${bridge.name}</strong> (${formatDisplayDate(bridge.start)} → ${formatDisplayDate(bridge.end)})<br>`;
                 message += `   ${bridge.suggestion}<br>`;
                 message += `   → Gain : ${bridge.totalDays} jours de repos pour ${bridge.daysNeeded} jour de congé<br><br>`;
             });
+            message += `💡 <em>Les périodes suggérées sont maintenant visibles sur le calendrier en jaune/orange. Cliquez sur une période pour l'ajouter à votre planning.</em>`;
             
             updateAIMessage(message, 'success');
+            
+            // Ajouter des suggestions pour appliquer chaque pont
+            bridges.forEach((bridge, index) => {
+                addAISuggestion(
+                    `Appliquer le pont de ${bridge.name}`,
+                    `Sélectionner la période du ${formatDisplayDate(bridge.start)} au ${formatDisplayDate(bridge.end)}`,
+                    () => applySuggestion(bridge.start, bridge.end, bridge.dates)
+                );
+            });
         }
 
         function suggestSummerPeriod() {
@@ -2066,36 +2228,53 @@
             // Suggérer une période estivale de 12 jours minimum
             const suggestedStart = new Date(currentYear, 4, 15); // 15 mai
             const suggestedEnd = new Date(currentYear, 4, 26); // 26 mai (12 jours ouvrables)
+            const startStr = formatDate(suggestedStart);
+            const endStr = formatDate(suggestedEnd);
+            
+            // Générer toutes les dates
+            const dates = [];
+            let current = new Date(suggestedStart);
+            while (current <= suggestedEnd) {
+                dates.push(formatDate(current));
+                current.setDate(current.getDate() + 1);
+            }
             
             const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
             const lastOuvrable = getLastOuvrableBefore(new Date(suggestedEnd.getTime() + 86400000), weeklyRestDay);
             const workDays = countOuvrables(suggestedStart, lastOuvrable, weeklyRestDay);
             
+            // Afficher la suggestion sur le calendrier
+            suggestedPeriods = [{
+                start: startStr,
+                end: endStr,
+                dates: dates,
+                type: 'summer',
+                name: 'Période estivale optimale'
+            }];
+            
+            // Afficher l'info et le bouton pour effacer
+            document.getElementById('suggestionsInfo').style.display = 'block';
+            document.getElementById('clearSuggestionsBtn').style.display = 'inline-flex';
+            
+            // Naviguer vers le mois de mai
+            currentDate = new Date(suggestedStart);
+            renderCalendar();
+            
             let message = `☀️ <strong>Suggestion de période estivale pour le fractionnement :</strong><br><br>`;
-            message += `📅 <strong>Période recommandée :</strong> Du ${formatDisplayDate(formatDate(suggestedStart))} au ${formatDisplayDate(formatDate(suggestedEnd))}<br>`;
+            message += `📅 <strong>Période recommandée :</strong> Du ${formatDisplayDate(startStr)} au ${formatDisplayDate(endStr)}<br>`;
             message += `📊 <strong>Jours ouvrables :</strong> ${workDays} jours<br><br>`;
             message += `✅ Cette période vous permet de :<br>`;
             message += `• Respecter la condition des 12 jours continus en été (mai-octobre)<br>`;
             message += `• Être éligible au fractionnement si vous gardez 3-6 jours du principal pour l'hiver<br>`;
             message += `• Profiter d'une belle période estivale<br><br>`;
-            message += `💡 <em>Vous pouvez ajuster cette période selon vos préférences, l'important est d'avoir au moins 12 jours continus entre le 1er mai et le 31 octobre.</em>`;
+            message += `💡 <em>La période suggérée est maintenant visible sur le calendrier en jaune/orange. Cliquez sur "Appliquer cette suggestion" pour l'ajouter à votre planning.</em>`;
             
             updateAIMessage(message, 'success');
             
             addAISuggestion(
                 'Appliquer cette suggestion',
-                'Je peux sélectionner cette période sur le calendrier pour vous',
-                () => {
-                    selectedDates = [];
-                    let current = new Date(suggestedStart);
-                    while (current <= suggestedEnd) {
-                        selectedDates.push(formatDate(current));
-                        current.setDate(current.getDate() + 1);
-                    }
-                    renderCalendar();
-                    updateSelectionInfo();
-                    updateAIMessage('✅ Période estivale suggérée sélectionnée sur le calendrier !', 'success');
-                }
+                `Sélectionner la période du ${formatDisplayDate(startStr)} au ${formatDisplayDate(endStr)}`,
+                () => applySuggestion(startStr, endStr, dates)
             );
         }
 
@@ -2106,36 +2285,53 @@
             // Suggérer une période hivernale de 3-6 jours
             const suggestedStart = new Date(currentYear, 11, 23); // 23 décembre
             const suggestedEnd = new Date(currentYear, 11, 27); // 27 décembre
+            const startStr = formatDate(suggestedStart);
+            const endStr = formatDate(suggestedEnd);
+            
+            // Générer toutes les dates
+            const dates = [];
+            let current = new Date(suggestedStart);
+            while (current <= suggestedEnd) {
+                dates.push(formatDate(current));
+                current.setDate(current.getDate() + 1);
+            }
             
             const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
             const lastOuvrable = getLastOuvrableBefore(new Date(suggestedEnd.getTime() + 86400000), weeklyRestDay);
             const workDays = countOuvrables(suggestedStart, lastOuvrable, weeklyRestDay);
             
+            // Afficher la suggestion sur le calendrier
+            suggestedPeriods = [{
+                start: startStr,
+                end: endStr,
+                dates: dates,
+                type: 'winter',
+                name: 'Période hivernale optimale'
+            }];
+            
+            // Afficher l'info et le bouton pour effacer
+            document.getElementById('suggestionsInfo').style.display = 'block';
+            document.getElementById('clearSuggestionsBtn').style.display = 'inline-flex';
+            
+            // Naviguer vers le mois de décembre
+            currentDate = new Date(suggestedStart);
+            renderCalendar();
+            
             let message = `❄️ <strong>Suggestion de période hivernale pour optimiser le fractionnement :</strong><br><br>`;
-            message += `📅 <strong>Période recommandée :</strong> Du ${formatDisplayDate(formatDate(suggestedStart))} au ${formatDisplayDate(formatDate(suggestedEnd))}<br>`;
+            message += `📅 <strong>Période recommandée :</strong> Du ${formatDisplayDate(startStr)} au ${formatDisplayDate(endStr)}<br>`;
             message += `📊 <strong>Jours ouvrables :</strong> ${workDays} jours<br><br>`;
             message += `✅ Cette période vous permet de :<br>`;
             message += `• Utiliser 3-6 jours du principal en période hivernale (novembre-avril)<br>`;
             message += `• Obtenir +2 jours de fractionnement si vous avez 6 jours ou +1 jour si vous avez 3 jours<br>`;
             message += `• Profiter des fêtes de fin d'année<br><br>`;
-            message += `💡 <em>L'idéal est de réserver 6 jours du principal (sur vos 24) pour l'hiver afin de maximiser le fractionnement.</em>`;
+            message += `💡 <em>La période suggérée est maintenant visible sur le calendrier en jaune/orange. Cliquez sur "Appliquer cette suggestion" pour l'ajouter à votre planning.</em>`;
             
             updateAIMessage(message, 'success');
             
             addAISuggestion(
                 'Appliquer cette suggestion',
-                'Je peux sélectionner cette période sur le calendrier pour vous',
-                () => {
-                    selectedDates = [];
-                    let current = new Date(suggestedStart);
-                    while (current <= suggestedEnd) {
-                        selectedDates.push(formatDate(current));
-                        current.setDate(current.getDate() + 1);
-                    }
-                    renderCalendar();
-                    updateSelectionInfo();
-                    updateAIMessage('✅ Période hivernale suggérée sélectionnée sur le calendrier !', 'success');
-                }
+                `Sélectionner la période du ${formatDisplayDate(startStr)} au ${formatDisplayDate(endStr)}`,
+                () => applySuggestion(startStr, endStr, dates)
             );
         }
 
