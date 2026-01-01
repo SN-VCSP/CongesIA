@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +24,7 @@
             --vinci-gray: #F5F5F5;
             --vinci-gray-dark: #666666;
             --vinci-gray-light: #e0e0e0da;
-            
+
             /* Application des couleurs */
             --primary: var(--vinci-blue);
             --primary-dark: var(--vinci-blue-dark);
@@ -105,7 +106,7 @@
         header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
             color: var(--vinci-white);
         }
 
@@ -119,7 +120,7 @@
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             border-left: 5px solid var(--vinci-blue);
         }
 
@@ -140,6 +141,12 @@
             justify-content: center;
             font-size: 1.8rem;
             box-shadow: 0 4px 10px rgba(227, 6, 19, 0.3);
+        }
+
+        /* Animation for dynamic inputs */
+        #ouvrierInputs,
+        #etamInputs {
+            animation: fadeIn 0.4s ease-out;
         }
 
         .ai-message {
@@ -214,7 +221,7 @@
 
         .suggestion-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             border-color: var(--vinci-blue);
         }
 
@@ -251,6 +258,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -268,13 +276,13 @@
             background: var(--card);
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .card h3 {
@@ -413,7 +421,8 @@
             margin-top: 20px;
         }
 
-        .gain, .loss {
+        .gain,
+        .loss {
             padding: 20px;
             border-radius: 10px;
             text-align: center;
@@ -429,7 +438,8 @@
             border: 2px solid var(--danger);
         }
 
-        .gain-label, .loss-label {
+        .gain-label,
+        .loss-label {
             font-size: 0.9rem;
             margin-bottom: 10px;
             color: var(--text-light);
@@ -567,8 +577,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         /* CALENDRIER INTERACTIF */
@@ -594,7 +609,7 @@
         }
 
         .nav-btn {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
             padding: 6px 12px;
@@ -605,7 +620,7 @@
         }
 
         .nav-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .current-month {
@@ -647,7 +662,7 @@
 
         .calendar-day:hover {
             transform: scale(1.08);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
             border-color: var(--vinci-blue);
         }
 
@@ -661,6 +676,27 @@
 
         .calendar-day.holiday {
             background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        }
+
+        .calendar-day.too-early {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px dashed #f59e0b;
+            opacity: 0.7;
+            position: relative;
+        }
+
+        .calendar-day.too-early::after {
+            content: '⚠️';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.7rem;
+        }
+
+        .calendar-day.past-date {
+            background: #e5e7eb;
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .calendar-day.selected {
@@ -754,7 +790,7 @@
 
         .period-item:hover {
             border-color: var(--vinci-blue);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
         }
 
         .period-info {
@@ -811,7 +847,7 @@
 
         .optimization-card:hover {
             transform: translateX(10px);
-            box-shadow: 0 5px 20px rgba(16,185,129,0.3);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
         }
 
         .optimization-header {
@@ -891,7 +927,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @media (max-width: 768px) {
@@ -999,20 +1037,24 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <div class="header-content">
                 <div class="logo-container">
-                    <img src="logo-eurovia.png" alt="Logo Eurovia" class="logo-eurovia" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display: none; color: white; font-weight: bold; font-size: 1.5rem;">SO</div>
+                    <img src="logo-eurovia.png" alt="Logo Eurovia" class="logo-eurovia"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display: none; color: white; font-weight: bold; font-size: 1.5rem;">EUROVIA</div>
                 </div>
                 <div class="header-text">
                     <h1>🎉 CONGÉS</h1>
                     <p>Votre assistant IA intelligent pour optimiser vos congés CNETP</p>
                 </div>
                 <div style="position: absolute; top: 15px; right: 15px; font-size: 0.9rem; opacity: 0.9; z-index: 2;">
-                    <span id="saveIndicator" style="display: none; background: rgba(255,255,255,0.3); padding: 5px 10px; border-radius: 5px;">💾 Sauvegardé</span>
+                    <span id="saveIndicator"
+                        style="display: none; background: rgba(255,255,255,0.3); padding: 5px 10px; border-radius: 5px;">💾
+                        Sauvegardé</span>
                 </div>
             </div>
         </header>
@@ -1026,12 +1068,36 @@
                 </div>
             </div>
             <div id="aiMessage" class="ai-message">
-                <strong>👋 Bonjour !</strong> Je suis votre assistant IA pour optimiser vos congés CNETP sur toute l'année.<br><br>
+                <strong>👋 Bonjour !</strong> Je suis votre assistant IA pour optimiser vos congés CNETP sur toute
+                l'année.<br><br>
+                <div
+                    style="background: rgba(251, 191, 36, 0.1); border-left: 4px solid #f59e0b; padding: 10px; margin: 10px 0; border-radius: 5px;">
+                    <strong>⚠️ Règles entreprise (courrier 2 avril 2025) :</strong><br>
+                    <ul style="margin: 8px 0 0 20px; padding: 0;">
+                        <li>Vous devez poser vos congés <strong>au moins 1 mois (30 jours) avant votre date de
+                                départ</strong></li>
+                        <li><strong>Les demi-journées de congés payés ne sont plus autorisées</strong> - seuls les jours
+                            entiers sont acceptés</li>
+                    </ul>
+                </div>
+                <div
+                    style="background: rgba(0, 51, 102, 0.1); border-left: 4px solid var(--vinci-blue); padding: 10px; margin: 10px 0; border-radius: 5px;">
+                    <strong>ℹ️ Gestion & Paiement CNETP :</strong><br>
+                    <ul style="margin: 8px 0 0 20px; padding: 0;">
+                        <li>Les congés sont gérés et <strong>payés directement par la CNETP</strong>, pas par
+                            l'entreprise.</li>
+                        <li><strong>Attention au décalage :</strong> L'indemnité de congés est versée indépendamment du
+                            salaire, ce qui peut entraîner un décalage de trésorerie.</li>
+                    </ul>
+                </div>
                 <strong>💡 Comment je peux vous aider :</strong>
                 <ul style="margin-top: 10px; margin-left: 20px;">
-                    <li><strong>Planification annuelle</strong> : Je vous suggère les meilleures périodes pour vos vacances</li>
-                    <li><strong>Optimisation intelligente</strong> : Je trouve les ponts et optimise vos dates pour maximiser vos jours de repos</li>
-                    <li><strong>Conseils personnalisés</strong> : Je vous guide pour obtenir le fractionnement et optimiser votre solde</li>
+                    <li><strong>Planification annuelle</strong> : Je vous suggère les meilleures périodes pour vos
+                        vacances</li>
+                    <li><strong>Optimisation intelligente</strong> : Je trouve les ponts et optimise vos dates pour
+                        maximiser vos jours de repos</li>
+                    <li><strong>Conseils personnalisés</strong> : Je vous guide pour obtenir le fractionnement et
+                        optimiser votre solde</li>
                     <li><strong>Vue d'ensemble</strong> : Je vous aide à visualiser et planifier toute votre année</li>
                 </ul>
                 <div id="aiSuggestions"></div>
@@ -1051,7 +1117,7 @@
             <div class="grid">
                 <div class="card calendar-container">
                     <h3><span class="card-icon">📅</span> Calendrier Interactif</h3>
-                    
+
                     <div class="calendar-header">
                         <button class="nav-btn" onclick="previousMonth()">◀</button>
                         <div class="current-month" id="currentMonth">Janvier 2025</div>
@@ -1065,16 +1131,21 @@
                             <div style="font-size: 0.9rem; color: var(--text-light);">Total de jours ouvrables</div>
                             <div class="selection-total" id="selectionTotal">0 jours</div>
                         </div>
-                        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
-                            <button class="btn btn-success" onclick="confirmAllSelections()">✓ Valider toutes les périodes</button>
-                            <button class="btn btn-warning" onclick="clearAllSelections()">🗑️ Effacer toutes les sélections</button>
+                        <div
+                            style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+                            <button class="btn btn-success" onclick="confirmAllSelections()">✓ Valider toutes les
+                                périodes</button>
+                            <button class="btn btn-warning" onclick="clearAllSelections()">🗑️ Effacer toutes les
+                                sélections</button>
                         </div>
                     </div>
 
                     <div class="calendar-grid" id="calendarGrid"></div>
 
-                    <div style="margin-top: 20px; padding: 15px; background: var(--bg); border-radius: 10px; border-left: 4px solid var(--vinci-blue);">
-                        <div style="font-weight: bold; color: var(--vinci-blue); margin-bottom: 8px;">💡 Comment planifier plusieurs périodes :</div>
+                    <div
+                        style="margin-top: 20px; padding: 15px; background: var(--bg); border-radius: 10px; border-left: 4px solid var(--vinci-blue);">
+                        <div style="font-weight: bold; color: var(--vinci-blue); margin-bottom: 8px;">💡 Comment
+                            planifier plusieurs périodes :</div>
                         <div style="font-size: 0.9rem; color: var(--text-light); line-height: 1.6;">
                             1. Cliquez sur une date de début<br>
                             2. Cliquez sur une date de fin pour créer une période<br>
@@ -1084,13 +1155,18 @@
                     </div>
                     <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-primary" onclick="optimizeSelection()">🎯 Optimiser la période</button>
-                        <button class="btn btn-warning" onclick="clearSelection()">🗑️ Effacer sélection en cours</button>
-                        <button class="btn btn-secondary" onclick="clearSuggestions()" id="clearSuggestionsBtn" style="display: none;">🗑️ Effacer suggestions</button>
+                        <button class="btn btn-warning" onclick="clearSelection()">🗑️ Effacer sélection en
+                            cours</button>
+                        <button class="btn btn-secondary" onclick="clearSuggestions()" id="clearSuggestionsBtn"
+                            style="display: none;">🗑️ Effacer suggestions</button>
                     </div>
-                    <div id="suggestionsInfo" style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 10px; border-left: 4px solid var(--warning); display: none;">
-                        <div style="font-weight: bold; color: var(--vinci-blue); margin-bottom: 5px;">💡 Périodes suggérées affichées</div>
+                    <div id="suggestionsInfo"
+                        style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 10px; border-left: 4px solid var(--warning); display: none;">
+                        <div style="font-weight: bold; color: var(--vinci-blue); margin-bottom: 5px;">💡 Périodes
+                            suggérées affichées</div>
                         <div style="font-size: 0.9rem; color: var(--text-light);">
-                            Les périodes en <strong>jaune/orange</strong> sont des suggestions de l'IA. Cliquez directement sur une période suggérée pour l'ajouter à votre planning.
+                            Les périodes en <strong>jaune/orange</strong> sont des suggestions de l'IA. Cliquez
+                            directement sur une période suggérée pour l'ajouter à votre planning.
                         </div>
                     </div>
                 </div>
@@ -1107,28 +1183,36 @@
                 <div class="card planning-helper">
                     <h4><span class="card-icon">📅</span> Planification Annuelle - Conseils IA</h4>
                     <p style="color: var(--text-light); margin-bottom: 15px; font-size: 0.95rem;">
-                        Laissez-moi vous aider à planifier vos vacances sur toute l'année pour optimiser votre solde et profiter au maximum.
+                        Laissez-moi vous aider à planifier vos vacances sur toute l'année pour optimiser votre solde et
+                        profiter au maximum.
                     </p>
                     <div id="planningSuggestions" class="planning-suggestions">
                         <div class="suggestion-card">
                             <div class="suggestion-card-title">🌉 Optimiser les ponts</div>
-                            <div class="suggestion-card-desc">Je peux identifier les meilleurs ponts de l'année pour maximiser vos jours de repos</div>
+                            <div class="suggestion-card-desc">Je peux identifier les meilleurs ponts de l'année pour
+                                maximiser vos jours de repos</div>
                             <button class="suggestion-card-action" onclick="suggestBridges()">Voir les ponts</button>
                         </div>
                         <div class="suggestion-card">
                             <div class="suggestion-card-title">☀️ Période estivale</div>
-                            <div class="suggestion-card-desc">Planifiez 12 jours continus en été pour obtenir le fractionnement</div>
-                            <button class="suggestion-card-action" onclick="suggestSummerPeriod()">Suggérer une période</button>
+                            <div class="suggestion-card-desc">Planifiez 12 jours continus en été pour obtenir le
+                                fractionnement</div>
+                            <button class="suggestion-card-action" onclick="suggestSummerPeriod()">Suggérer une
+                                période</button>
                         </div>
                         <div class="suggestion-card">
                             <div class="suggestion-card-title">❄️ Période hivernale</div>
-                            <div class="suggestion-card-desc">Réservez 3-6 jours du principal en hiver pour maximiser le fractionnement</div>
-                            <button class="suggestion-card-action" onclick="suggestWinterPeriod()">Suggérer une période</button>
+                            <div class="suggestion-card-desc">Réservez 3-6 jours du principal en hiver pour maximiser le
+                                fractionnement</div>
+                            <button class="suggestion-card-action" onclick="suggestWinterPeriod()">Suggérer une
+                                période</button>
                         </div>
                         <div class="suggestion-card">
                             <div class="suggestion-card-title">📊 Analyse complète</div>
-                            <div class="suggestion-card-desc">J'analyse votre situation et vous propose un plan d'optimisation personnalisé</div>
-                            <button class="suggestion-card-action" onclick="generateYearlyPlan()">Générer un plan</button>
+                            <div class="suggestion-card-desc">J'analyse votre situation et vous propose un plan
+                                d'optimisation personnalisé</div>
+                            <button class="suggestion-card-action" onclick="generateYearlyPlan()">Générer un
+                                plan</button>
                         </div>
                     </div>
                 </div>
@@ -1142,27 +1226,62 @@
                     <h3><span class="card-icon">⚙️</span> Configuration</h3>
                     <div class="form-group">
                         <label>Droits annuels acquis (jours ouvrables)</label>
-                        <input type="number" id="annualRights" value="30" min="0" onchange="calculateBalance(); autoSave();">
+                        <input type="number" id="annualRights" value="30" min="0" step="1"
+                            onchange="calculateBalance(); autoSave();">
                     </div>
                     <div class="form-group">
-                        <label>CP Ancienneté</label>
-                        <input type="number" id="anciennete" value="0" min="0" onchange="calculateBalance(); autoSave();">
+                        <label>Catégorie Professionnelle</label>
+                        <select id="userCategory" onchange="toggleSeniorityInputs(); calculateBalance(); autoSave();">
+                            <option value="ouvrier">Ouvrier</option>
+                            <option value="etam">ETAM / Cadre</option>
+                        </select>
+                    </div>
+
+                    <div id="ouvrierInputs">
+                        <div class="form-group">
+                            <label>Années de service (Ouvrier)</label>
+                            <input type="number" id="serviceYears" value="0" min="0" step="1"
+                                onchange="calculateBalance(); autoSave();">
+                        </div>
+                    </div>
+
+                    <div id="etamInputs" style="display: none;">
+                        <div class="form-group">
+                            <label>Ancienneté Entreprise (années)</label>
+                            <input type="number" id="companySeniority" value="0" min="0" step="1"
+                                onchange="calculateBalance(); autoSave();">
+                        </div>
+                        <div class="form-group">
+                            <label>Ancienneté Profession (années)</label>
+                            <input type="number" id="professionSeniority" value="0" min="0" step="1"
+                                onchange="calculateBalance(); autoSave();">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>CP Ancienneté (Calculé automatiquement)</label>
+                        <input type="number" id="anciennete" value="0" min="0" step="1" readonly
+                            style="background: var(--bg);">
                     </div>
                     <div class="form-group">
                         <label>CP Enfant à charge</label>
-                        <input type="number" id="enfant" value="0" min="0" onchange="calculateBalance(); autoSave();">
+                        <input type="number" id="enfant" value="0" min="0" step="1"
+                            onchange="calculateBalance(); autoSave();">
                     </div>
                     <div class="form-group">
                         <label>Report (N-1)</label>
-                        <input type="number" id="report" value="0" min="0" onchange="calculateBalance(); autoSave();">
+                        <input type="number" id="report" value="0" min="0" step="1"
+                            onchange="calculateBalance(); autoSave();">
                     </div>
                     <div class="form-group">
                         <label>5ème Semaine</label>
-                        <input type="number" id="cinquieme" value="6" min="0" onchange="calculateBalance(); autoSave();">
+                        <input type="number" id="cinquieme" value="6" min="0" step="1"
+                            onchange="calculateBalance(); autoSave();">
                     </div>
                     <div class="form-group">
                         <label>Fractionnement (estimé automatiquement)</label>
-                        <input type="number" id="fractionnement" value="0" min="0" readonly style="background: var(--bg);">
+                        <input type="number" id="fractionnement" value="0" min="0" readonly
+                            style="background: var(--bg);">
                     </div>
                     <div class="form-group">
                         <label>Jour de repos hebdomadaire</label>
@@ -1257,7 +1376,11 @@
                     </div>
                     <div class="form-group">
                         <label>Nombre de jours (optionnel - sera calculé automatiquement)</label>
-                        <input type="number" id="newLeaveDays" min="0" placeholder="Laisser vide pour calcul automatique">
+                        <input type="number" id="newLeaveDays" min="0" step="1"
+                            placeholder="Laisser vide pour calcul automatique">
+                        <small style="color: var(--text-light); font-size: 0.85rem; display: block; margin-top: 5px;">
+                            ⚠️ Les demi-journées ne sont plus autorisées (règle entreprise)
+                        </small>
                     </div>
                     <button class="btn btn-primary" onclick="addLeavePeriod()">
                         ➕ Ajouter cette période
@@ -1266,7 +1389,8 @@
                         <h4 style="color: var(--vinci-blue); margin-bottom: 15px;">📥 Import JSON (optionnel)</h4>
                         <div class="form-group">
                             <label>Importer un historique en JSON</label>
-                            <textarea id="historyInput" rows="3" placeholder='[{"debut": "2024-05-15", "fin": "2024-05-20", "jours": 5}]'></textarea>
+                            <textarea id="historyInput" rows="3"
+                                placeholder='[{"debut": "2024-05-15", "fin": "2024-05-20", "jours": 5}]'></textarea>
                         </div>
                         <button class="btn btn-secondary" onclick="importHistory()">
                             📥 Importer depuis JSON
@@ -1279,18 +1403,21 @@
                     <div class="table-container">
                         <div id="historyTableContainer" style="margin-top: 20px;">
                             <p style="color: var(--text-light); text-align: center; padding: 20px;">
-                                Aucune période de congé enregistrée. Ajoutez votre première période ci-contre ou utilisez le calendrier.
+                                Aucune période de congé enregistrée. Ajoutez votre première période ci-contre ou
+                                utilisez le calendrier.
                             </p>
                         </div>
                     </div>
                     <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="btn btn-success" onclick="analyzeHistory()" id="analyzeBtn" style="display: none;">
+                        <button class="btn btn-success" onclick="analyzeHistory()" id="analyzeBtn"
+                            style="display: none;">
                             🧠 Analyser avec l'IA
                         </button>
                         <button class="btn btn-secondary" onclick="clearHistory()" id="clearBtn" style="display: none;">
                             🗑️ Effacer tout l'historique
                         </button>
-                        <button class="btn btn-secondary" onclick="exportHistory()" id="exportBtn" style="display: none;">
+                        <button class="btn btn-secondary" onclick="exportHistory()" id="exportBtn"
+                            style="display: none;">
                             💾 Exporter en JSON
                         </button>
                     </div>
@@ -1329,12 +1456,29 @@
             { date: '2025-12-25', nom: 'Noël' }
         ];
 
+        const JOURS_FERIES_2026 = [
+            { date: '2026-01-01', nom: 'Jour de l\'an' },
+            { date: '2026-04-06', nom: 'Lundi de Pâques' },
+            { date: '2026-05-01', nom: 'Fête du Travail' },
+            { date: '2026-05-08', nom: 'Victoire 1945' },
+            { date: '2026-05-14', nom: 'Ascension' },
+            { date: '2026-05-25', nom: 'Lundi de Pentecôte' },
+            { date: '2026-07-14', nom: 'Fête Nationale' },
+            { date: '2026-08-15', nom: 'Assomption' },
+            { date: '2026-11-01', nom: 'Toussaint' },
+            { date: '2026-11-11', nom: 'Armistice 1918' },
+            { date: '2026-12-25', nom: 'Noël' }
+        ];
+
         const publicHolidays = [
             '2024-01-01', '2024-04-01', '2024-05-01', '2024-05-08', '2024-05-09',
             '2024-05-20', '2024-07-14', '2024-08-15', '2024-11-01', '2024-11-11',
             '2024-12-25', '2025-01-01', '2025-04-21', '2025-05-01', '2025-05-08',
             '2025-05-29', '2025-06-09', '2025-07-14', '2025-08-15', '2025-11-01',
-            '2025-11-11', '2025-12-25'
+            '2025-11-11', '2025-12-25',
+            '2026-01-01', '2026-04-06', '2026-05-01', '2026-05-08', '2026-05-14',
+            '2026-05-25', '2026-07-14', '2026-08-15', '2026-11-01', '2026-11-11',
+            '2026-12-25'
         ];
 
         // ===== ÉTAT GLOBAL =====
@@ -1348,7 +1492,7 @@
         };
 
         let leaveHistory = [];
-        
+
         // État du calendrier
         let currentDate = new Date();
         let selectedDates = []; // Dates de la période en cours de sélection
@@ -1359,12 +1503,21 @@
 
         // ===== FONCTIONS UTILITAIRES CNETP =====
         function isOuvrable(date, weeklyRestDay = 0) {
+            // Règles CNETP standard : jours ouvrables = lundi à samedi (6 jours/semaine)
+            // Le dimanche (jour 0) est toujours non ouvrable
+            // Le samedi (jour 6) est toujours ouvrable
+            // Les jours fériés sont non ouvrables
+
             const day = date.getDay();
-            if (day === weeklyRestDay) return false;
-            
+
+            // Le dimanche (jour 0) est toujours non ouvrable selon les règles CNETP
+            if (day === 0) return false;
+
+            // Vérifier les jours fériés
             const dateStr = date.toISOString().split('T')[0];
             if (publicHolidays.includes(dateStr)) return false;
-            
+
+            // Tous les autres jours (lundi=1 à samedi=6) sont ouvrables
             return true;
         }
 
@@ -1372,7 +1525,7 @@
             let count = 0;
             const current = new Date(start);
             const endDate = new Date(end);
-            
+
             while (current <= endDate) {
                 if (isOuvrable(current, weeklyRestDay)) {
                     count++;
@@ -1383,23 +1536,63 @@
         }
 
         function getLastOuvrableBefore(reprise, weeklyRestDay = 0) {
+            // Règle CNETP : "Le dernier jour de congés sera nécessairement le dernier jour ouvrable précédant la reprise du travail"
+            // On recule depuis la date de reprise jusqu'à trouver le dernier jour ouvrable
+
+            // Créer une copie de la date de reprise pour éviter de modifier l'original
             let d = new Date(reprise);
+
+            // Reculer d'un jour (le jour de reprise n'est pas inclus dans les congés)
             d.setDate(d.getDate() - 1);
-            while (!isOuvrable(d, weeklyRestDay)) {
+
+            // Continuer à reculer jusqu'à trouver un jour ouvrable
+            // Protection contre les boucles infinies (ne devrait jamais arriver, mais sécurité)
+            let maxIterations = 10;
+            let iterations = 0;
+
+            while (!isOuvrable(d, weeklyRestDay) && iterations < maxIterations) {
+                d.setDate(d.getDate() - 1);
+                iterations++;
+            }
+
+            // Vérification de sécurité
+            if (iterations >= maxIterations) {
+                console.error('Erreur : impossible de trouver un jour ouvrable avant la reprise');
+                // Retourner la date de reprise - 1 jour comme fallback
+                d = new Date(reprise);
                 d.setDate(d.getDate() - 1);
             }
+
             return d;
         }
 
         function imputeDays(rights, daysNeeded) {
-            const remaining = {...rights};
+            // Règle CNETP : Ordre d'imputation des jours de congé
+            // 1. Ancienneté
+            // 2. Enfant
+            // 3. Report (N-1)
+            // 4. 5ème semaine (6 jours) - jours 25 à 30
+            // 5. Fractionnement (0, 1 ou 2 jours selon les conditions)
+            // 6. Principal (24 jours) - jours 1 à 24
+            //
+            // CONFIRMATION ORDRE CNETP :
+            // L'application suit strictement cet ordre d'imputation.
+            // Les jours "bonus" (Ancienneté, Enfant, Report) sont consommés en PREMIER.
+            // Le congé Principal (24 jours) est consommé en DERNIER.
+            // Cela permet de préserver le Principal pour les calculs de fractionnement si nécessaire,
+            // bien que cela puisse réduire les jours "Principal" pris en été si l'utilisateur a beaucoup d'ancienneté.
+            //
+            // IMPORTANT : Le fractionnement se calcule UNIQUEMENT sur les 24 premiers jours (congé principal)
+            // La 5ème semaine (6 jours) est consommée AVANT le principal, donc elle n'est jamais comptée pour le fractionnement
+
+            const remaining = { ...rights };
             const consumed = {
                 ANCIENNETE: 0,
                 ENFANT: 0,
                 REPORT: 0,
-                CINQUIEME: 0,
-                FRACTIONNEMENT: 0,
-                PRINCIPAL: 0
+                CINQUIEME: 0,      // 5ème semaine (6 jours) - consommée AVANT le principal
+                FRACTIONNEMENT: 0, // Calculé après, consommé AVANT le principal
+                PRINCIPAL: 0       // Congé principal (24 jours) - consommé EN DERNIER
             };
 
             let leftToConsume = daysNeeded;
@@ -1408,11 +1601,12 @@
                 'anciennete': 'ANCIENNETE',
                 'enfant': 'ENFANT',
                 'report': 'REPORT',
-                'cinquieme': 'CINQUIEME',
-                'fractionnement': 'FRACTIONNEMENT',
-                'principal': 'PRINCIPAL'
+                'cinquieme': 'CINQUIEME',      // 5ème semaine consommée en 4ème position
+                'fractionnement': 'FRACTIONNEMENT', // Fractionnement consommé en 5ème position
+                'principal': 'PRINCIPAL'       // Principal consommé en dernier (24 jours)
             };
 
+            // Consommer les jours dans l'ordre CNETP
             for (const type of order) {
                 if (leftToConsume <= 0) break;
                 const available = remaining[type];
@@ -1425,27 +1619,100 @@
             return { remaining, consumed, totalConsumed: daysNeeded - leftToConsume };
         }
 
+        function calculateSeniorityDays() {
+            const category = document.getElementById('userCategory').value;
+            let days = 0;
+
+            if (category === 'ouvrier') {
+                const years = parseInt(document.getElementById('serviceYears').value) || 0;
+                // Règle Ouvriers :
+                // 20 ans et < 25 ans : 2 jours
+                // 25 ans et < 30 ans : 4 jours
+                // 30 ans et plus : 6 jours
+                if (years >= 30) days = 6;
+                else if (years >= 25) days = 4;
+                else if (years >= 20) days = 2;
+                else days = 0;
+            } else {
+                // Règle ETAM / Cadres :
+                const companyYears = parseInt(document.getElementById('companySeniority').value) || 0;
+                const professionYears = parseInt(document.getElementById('professionSeniority').value) || 0;
+
+                // Dans l'entreprise : 5-10 ans = 2j, >10 ans = 3j
+                // Dans la profession : 10-20 ans = 2j, >20 ans = 3j
+                // On prend le plus favorable des deux (règle implicite du "ou") ou le cumul ?
+                // Généralement c'est "si condition A OU condition B".
+                // Le tableau indique "Congés supplémentaires" pour chaque colonne.
+                // Interprétation standard : on vérifie pour 3 jours, sinon pour 2 jours.
+
+                // Pour 3 jours : >10 ans Ent OU >20 ans Prof
+                // Le tableau dit "10 ans et plus" (Ent) -> 3j
+                // "20 ans et plus" (Prof) -> 3j
+                if (companyYears >= 10 || professionYears >= 20) {
+                    days = 3;
+                }
+                // Pour 2 jours : 5-10 ans Ent OU 10-20 ans Prof
+                else if (companyYears >= 5 || professionYears >= 10) {
+                    days = 2;
+                } else {
+                    days = 0;
+                }
+            }
+
+            return days;
+        }
+
+        function toggleSeniorityInputs() {
+            const category = document.getElementById('userCategory').value;
+            const ouvrierInputs = document.getElementById('ouvrierInputs');
+            const etamInputs = document.getElementById('etamInputs');
+
+            if (category === 'ouvrier') {
+                ouvrierInputs.style.display = 'block';
+                etamInputs.style.display = 'none';
+            } else {
+                ouvrierInputs.style.display = 'none';
+                etamInputs.style.display = 'block';
+            }
+        }
+
         function calculateFractionnement(params) {
-            // Règles CNETP pour le fractionnement (3 conditions cumulatives) :
-            // 1. Droits annuels >= 15 jours
-            // 2. 12 jours continus en été (1er mai - 31 octobre) du PRINCIPAL uniquement (pas la 5ème semaine)
-            // 3. 3-6 jours du PRINCIPAL en hiver (1er novembre - 30 avril) - pas la 5ème semaine
-            
-            // Condition 1 : Droits annuels >= 15
-            if (params.annualRightsAcquired < 15) return 0;
-            
-            // Condition 2 : 12 jours continus en été du PRINCIPAL uniquement
-            // Vérifier qu'il y a une période continue de 12 jours ou plus du principal en été
+            // Règles CNETP officielles pour le fractionnement (3 conditions cumulatives) :
+            // 
+            // POUR 1 JOUR SUPPLÉMENTAIRE :
+            // 1. Avoir pris au moins 12 jours continus sur les 24 premiers jours du congé légal (du principal)
+            // 2. Avoir pris au maximum 21 jours ouvrables entre le 1er mai et le 31 octobre (du principal)
+            // 3. Prendre 3 à 5 jours ouvrables de congé entre le 1er novembre et le 30 avril (du principal)
+            //
+            // POUR 2 JOURS SUPPLÉMENTAIRES :
+            // 1. Avoir pris au moins 12 jours continus sur les 24 premiers jours du congé légal (du principal)
+            // 2. Avoir pris au maximum 18 jours ouvrables entre le 1er mai et le 31 octobre (du principal)
+            // 3. Prendre 6 jours ouvrables de congé entre le 1er novembre et le 30 avril (du principal)
+
+            // Condition 1 : 12 jours continus du principal en été
             if (!params.isContinuous12Summer) return 0;
-            
+
             // Vérifier que les 12 jours continus sont bien du principal (pas de la 5ème semaine)
-            // Les jours du principal en été doivent être >= 12
             if (params.principalDaysTakenSummer < 12) return 0;
-            
-            // Condition 3 : 3-6 jours du PRINCIPAL en hiver (pas la 5ème semaine)
-            const daysSubjectToBonus = params.principalDaysTakenWinter;
-            if (daysSubjectToBonus >= 6) return 2;
-            if (daysSubjectToBonus >= 3) return 1;
+
+            // Condition 2 : Maximum de jours en été (du principal)
+            // Pour +2 jours : maximum 18 jours en été
+            // Pour +1 jour : maximum 21 jours en été
+            if (params.principalDaysTakenSummer > 21) return 0; // Au-delà de 21, aucun fractionnement
+
+            // Condition 3 : Jours en hiver (du principal)
+            const daysWinter = params.principalDaysTakenWinter;
+
+            // Vérifier d'abord pour 2 jours supplémentaires
+            if (params.principalDaysTakenSummer <= 18 && daysWinter === 6) {
+                return 2;
+            }
+
+            // Vérifier pour 1 jour supplémentaire
+            if (params.principalDaysTakenSummer <= 21 && daysWinter >= 3 && daysWinter <= 5) {
+                return 1;
+            }
+
             return 0;
         }
 
@@ -1453,7 +1720,7 @@
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            
+
             event.target.classList.add('active');
             document.getElementById(tabName + 'Tab').classList.add('active');
 
@@ -1466,25 +1733,25 @@
         function updateAIMessage(message, type = 'info') {
             const aiMessage = document.getElementById('aiMessage');
             const suggestionsDiv = document.getElementById('aiSuggestions');
-            
+
             // Garder le message principal et ajouter les suggestions
-            const baseMessage = message.includes('<strong>👋') ? message : 
+            const baseMessage = message.includes('<strong>👋') ? message :
                 `<strong>💬 Assistant IA :</strong><br>${message}`;
-            
+
             aiMessage.innerHTML = baseMessage;
             if (suggestionsDiv) {
                 suggestionsDiv.innerHTML = '';
             }
-            
-            aiMessage.style.borderLeftColor = type === 'success' ? 'var(--success)' : 
-                                             type === 'warning' ? 'var(--warning)' : 
-                                             type === 'error' ? 'var(--danger)' : 'var(--vinci-blue)';
+
+            aiMessage.style.borderLeftColor = type === 'success' ? 'var(--success)' :
+                type === 'warning' ? 'var(--warning)' :
+                    type === 'error' ? 'var(--danger)' : 'var(--vinci-blue)';
         }
 
         function addAISuggestion(title, description, action) {
             const suggestionsDiv = document.getElementById('aiSuggestions');
             if (!suggestionsDiv) return;
-            
+
             const suggestion = document.createElement('div');
             suggestion.className = 'ai-suggestion';
             suggestion.innerHTML = `
@@ -1501,10 +1768,10 @@
         function renderCalendar() {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
-            
+
             // Mise à jour du titre
             const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-                              'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
             document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
 
             // Création de la grille
@@ -1551,18 +1818,19 @@
         function createDayCell(year, month, day, otherMonth) {
             const cell = document.createElement('div');
             cell.className = 'calendar-day';
-            
+
             const date = new Date(year, month, day);
             const dateStr = formatDate(date);
-            
+
             if (otherMonth) {
                 cell.classList.add('other-month');
             }
 
-            // Weekend - En CNETP, seul le dimanche est non ouvrable (sauf si c'est le jour de repos hebdomadaire)
+            // Weekend - Règles CNETP standard : seul le dimanche (jour 0) est non ouvrable
+            // Le samedi (jour 6) est un jour ouvrable
             const dayOfWeek = date.getDay();
-            const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
-            if (dayOfWeek === weeklyRestDay) {
+            // Toujours considérer le dimanche comme weekend selon les règles CNETP
+            if (dayOfWeek === 0) {
                 cell.classList.add('weekend');
             }
 
@@ -1595,6 +1863,21 @@
                 }
             }
 
+            // Vérifier la règle du 1 mois à l'avance (règle entreprise)
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const daysUntilDate = Math.floor((date - today) / (1000 * 60 * 60 * 24));
+            if (daysUntilDate < 30 && daysUntilDate >= 0) {
+                // Date dans moins de 30 jours - ne respecte pas la règle du 1 mois à l'avance
+                cell.classList.add('too-early');
+                const daysShort = 30 - daysUntilDate;
+                cell.title = `⚠️ Règle entreprise : Vous devez poser vos congés au moins 1 mois (30 jours) à l'avance. Il manque ${daysShort} jour(s).`;
+            } else if (daysUntilDate < 0) {
+                // Date dans le passé
+                cell.classList.add('past-date');
+                cell.title = '❌ Cette date est dans le passé.';
+            }
+
             // Périodes suggérées par l'IA
             suggestedPeriods.forEach((suggestion, suggestionIndex) => {
                 if (suggestion.dates && suggestion.dates.includes(dateStr)) {
@@ -1624,10 +1907,10 @@
             // Gérer le clic : si c'est une période suggérée, l'appliquer directement
             cell.onclick = () => {
                 // Vérifier si on clique sur une période suggérée
-                const clickedSuggestion = suggestedPeriods.find(suggestion => 
+                const clickedSuggestion = suggestedPeriods.find(suggestion =>
                     suggestion.dates && suggestion.dates.includes(dateStr)
                 );
-                
+
                 if (clickedSuggestion) {
                     // Appliquer la suggestion
                     applySuggestion(clickedSuggestion.start, clickedSuggestion.end, clickedSuggestion.dates);
@@ -1651,39 +1934,39 @@
                 // Deuxième clic - fin de la période
                 const start = new Date(rangeStart);
                 const end = date;
-                
+
                 // Vérifier que la fin est après le début
                 if (end < start) {
                     updateAIMessage('⚠️ La date de fin doit être après la date de début', 'warning');
                     return;
                 }
-                
+
                 // Validation : délai minimum de 1 mois entre périodes (règle CNETP)
                 const validationError = validatePeriodGap(start, end);
                 if (validationError) {
                     updateAIMessage(validationError, 'error');
                     return;
                 }
-                
+
                 // Calculer le dernier jour ouvrable avant la reprise
                 const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
                 const reprise = new Date(end);
                 reprise.setDate(reprise.getDate() + 1);
                 const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
-                
+
                 // Générer toutes les dates de la période (du début à la fin sélectionnée)
                 selectedDates = [];
                 let current = new Date(start);
                 const endDate = new Date(end);
-                
+
                 while (current <= endDate) {
                     selectedDates.push(formatDate(current));
                     current.setDate(current.getDate() + 1);
                 }
-                
+
                 // Calculer les jours ouvrables jusqu'au dernier jour ouvrable avant la reprise
                 const workDays = countOuvrables(start, lastOuvrable, weeklyRestDay);
-                
+
                 // Ajouter cette période à la liste des périodes en attente
                 pendingPeriods.push({
                     start: formatDate(new Date(start)),
@@ -1692,88 +1975,107 @@
                     dates: [...selectedDates],
                     jours: workDays
                 });
-                
+
                 // Réinitialiser pour la prochaine sélection
                 selectedDates = [];
                 rangeStart = null;
                 selectionMode = false;
-                
+
                 updateSelectionInfo();
-                
+
                 // Analyser automatiquement la sélection
                 setTimeout(() => analyzeSelection(pendingPeriods[pendingPeriods.length - 1]), 500);
             }
-            
+
             renderCalendar();
         }
 
         // Validation du délai minimum de 1 mois entre périodes (règle CNETP)
+        // Validation : obligation de poser les congés 1 mois à l'avance (règle entreprise)
+        function validateOneMonthAdvance(startDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Réinitialiser l'heure pour la comparaison
+
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0);
+
+            // Calculer la différence en jours
+            const daysUntilStart = Math.floor((start - today) / (1000 * 60 * 60 * 24));
+
+            // Règle entreprise : il faut poser les congés au moins 1 mois (30 jours) avant la date de départ
+            if (daysUntilStart < 30) {
+                const daysShort = 30 - daysUntilStart;
+                if (daysUntilStart < 0) {
+                    return `❌ <strong>Règle entreprise non respectée :</strong> Vous ne pouvez pas poser des congés dans le passé. La date de début doit être au moins 1 mois après aujourd'hui (${formatDisplayDate(today.toISOString().split('T')[0])}).`;
+                } else {
+                    return `❌ <strong>Règle entreprise non respectée :</strong> Vous devez poser vos congés au moins 1 mois (30 jours) avant votre date de départ selon le courrier du 2 avril 2025. Il vous manque ${daysShort} jour(s). Date minimale autorisée : ${formatDisplayDate(new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])}.`;
+                }
+            }
+
+            return null; // Pas d'erreur
+        }
+
         function validatePeriodGap(start, end) {
-            if (leaveHistory.length === 0) return null; // Pas de validation si c'est la première période
-            
+            // Validation 1 : obligation de poser les congés 1 mois à l'avance (règle entreprise)
+            const advanceError = validateOneMonthAdvance(start);
+            if (advanceError) {
+                return advanceError;
+            }
+
+            if (leaveHistory.length === 0) return null; // Pas de validation supplémentaire si c'est la première période
+
             // Vérifier qu'il y a au moins 1 mois (30 jours) entre cette période et les autres
             const periodStart = new Date(start);
             const periodEnd = new Date(end);
-            
+
             for (const existingLeave of leaveHistory) {
                 const existingStart = new Date(existingLeave.debut);
                 const existingEnd = new Date(existingLeave.fin);
-                
+
                 // Vérifier si les périodes se chevauchent
                 if ((periodStart <= existingEnd && periodEnd >= existingStart)) {
                     return '❌ Cette période chevauche une période existante. Les périodes ne peuvent pas se chevaucher.';
                 }
-                
-                // Vérifier le délai minimum de 1 mois (30 jours)
-                const daysBetween = Math.abs((periodStart - existingEnd) / (1000 * 60 * 60 * 24));
-                const daysBetweenReverse = Math.abs((existingStart - periodEnd) / (1000 * 60 * 60 * 24));
-                
-                if (daysBetween < 30 && daysBetween > 0) {
-                    return `❌ Délai insuffisant : Il doit y avoir au moins 1 mois (30 jours) entre deux périodes de congés selon les règles CNETP. Délai actuel : ${Math.floor(daysBetween)} jours.`;
-                }
-                
-                if (daysBetweenReverse < 30 && daysBetweenReverse > 0) {
-                    return `❌ Délai insuffisant : Il doit y avoir au moins 1 mois (30 jours) entre deux périodes de congés selon les règles CNETP. Délai actuel : ${Math.floor(daysBetweenReverse)} jours.`;
-                }
             }
-            
+
             return null; // Pas d'erreur
         }
 
         // Analyser automatiquement une sélection
         function analyzeSelection(period) {
             if (!period) return;
-            
+
             const start = new Date(period.start);
             const month = start.getMonth();
             const workDays = period.jours;
-            
+
             let analysis = `📊 <strong>Analyse automatique de votre sélection :</strong><br><br>`;
             analysis += `📅 Du ${formatDisplayDate(period.start)} au ${formatDisplayDate(period.end)}<br>`;
             analysis += `📊 ${workDays} jours ouvrables<br><br>`;
-            
-            // Conseils selon la période
+
+            // Conseils selon la période selon les règles CNETP officielles
             if (month >= 4 && month <= 9) {
-                analysis += `☀️ <strong>Période estivale</strong> : `;
+                analysis += `☀️ <strong>Période estivale (1er mai - 31 octobre)</strong> :<br>`;
                 if (workDays >= 12) {
-                    analysis += `Excellent ! Cette période respecte la condition des 12 jours continus pour le fractionnement.`;
+                    analysis += `✅ Cette période respecte la condition des 12 jours continus du principal pour le fractionnement.<br>`;
                 } else {
-                    analysis += `Pour le fractionnement, vous devez prendre au moins 12 jours continus du principal en été.`;
+                    analysis += `⚠️ Pour le fractionnement, vous devez prendre au moins 12 jours continus du principal (sur les 24 premiers jours) en été.<br>`;
                 }
+                analysis += `💡 <strong>Rappel CNETP :</strong> Pour obtenir le fractionnement, vous devez prendre au maximum 21 jours du principal en été (pour +1 jour) ou 18 jours (pour +2 jours).<br>`;
             } else {
-                analysis += `❄️ <strong>Période hivernale</strong> : `;
-                analysis += `Parfait pour optimiser le fractionnement si vous avez déjà pris 12 jours continus en été.`;
+                analysis += `❄️ <strong>Période hivernale (1er novembre - 30 avril)</strong> :<br>`;
+                analysis += `💡 <strong>Rappel CNETP :</strong> Pour obtenir le fractionnement, vous devez prendre 3 à 5 jours du principal en hiver (pour +1 jour) ou exactement 6 jours (pour +2 jours), en plus d'avoir pris 12 jours continus du principal en été.<br>`;
             }
-            
+
             // Vérifier l'échéance du 15 mai
             const today = new Date();
             const may15 = new Date(today.getFullYear(), 4, 15); // 15 mai
             const daysUntilMay15 = Math.floor((may15 - today) / (1000 * 60 * 60 * 24));
-            
+
             if (daysUntilMay15 > 0 && daysUntilMay15 <= 30) {
-                analysis += `<br><br>⚠️ <strong>Rappel important :</strong> La date limite pour poser vos congés est le <strong>15 mai</strong> (dans ${daysUntilMay15} jour(s)).`;
+                analysis += `<br>⚠️ <strong>Rappel important :</strong> La date limite pour poser vos congés est le <strong>15 mai</strong> (dans ${daysUntilMay15} jour(s)).`;
             }
-            
+
             updateAIMessage(analysis, 'info');
         }
 
@@ -1781,21 +2083,21 @@
             const info = document.getElementById('selectionInfo');
             const periodsList = document.getElementById('periodsList');
             const selectionTotal = document.getElementById('selectionTotal');
-            
+
             // Afficher si on a des périodes en attente ou une sélection en cours
             if (pendingPeriods.length > 0 || (selectedDates.length > 0 && selectionMode)) {
                 info.style.display = 'block';
-                
+
                 // Afficher la période en cours de sélection si elle existe
                 let html = '';
-                
+
                 // Période en cours de sélection (si pas encore complétée)
                 if (selectedDates.length > 0 && selectionMode && rangeStart) {
                     const start = selectedDates[0];
                     const end = selectedDates.length > 1 ? selectedDates[selectedDates.length - 1] : start;
                     const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
                     const workDays = countWorkDaysFromDates(selectedDates, weeklyRestDay);
-                    
+
                     html += `
                         <div class="period-item" style="border-color: var(--warning);">
                             <div class="period-info">
@@ -1805,7 +2107,7 @@
                         </div>
                     `;
                 }
-                
+
                 // Périodes en attente de validation
                 pendingPeriods.forEach((period, index) => {
                     const lastOuvrableInfo = period.lastOuvrable ? ` (dernier ouvrable: ${formatDisplayDate(period.lastOuvrable)})` : '';
@@ -1822,9 +2124,9 @@
                         </div>
                     `;
                 });
-                
+
                 periodsList.innerHTML = html;
-                
+
                 // Calculer le total
                 const totalDays = pendingPeriods.reduce((sum, p) => sum + p.jours, 0);
                 selectionTotal.textContent = `${totalDays} jours ouvrables`;
@@ -1838,83 +2140,124 @@
                 updateAIMessage('⚠️ Aucune période à valider. Sélectionnez d\'abord des périodes sur le calendrier.', 'warning');
                 return;
             }
-            
+
+            // Valider toutes les périodes avant de les ajouter
+            for (const period of pendingPeriods) {
+                const start = new Date(period.start);
+                const end = new Date(period.end);
+
+                // Validation : obligation de poser les congés 1 mois à l'avance
+                const advanceError = validateOneMonthAdvance(start);
+                if (advanceError) {
+                    updateAIMessage(advanceError, 'error');
+                    return;
+                }
+
+                // Validation : délai minimum entre périodes
+                const gapError = validatePeriodGap(start, end);
+                if (gapError && !gapError.includes('Règle entreprise')) { // Éviter les doublons
+                    updateAIMessage(gapError, 'error');
+                    return;
+                }
+            }
+
             let totalDays = 0;
             let addedCount = 0;
-            
+
             pendingPeriods.forEach(period => {
+                // Règle CNETP : stocker le dernier jour ouvrable réel, pas la date de fin sélectionnée
+                const finReelle = period.lastOuvrable || period.end;
                 leaveHistory.push({
                     debut: period.start,
-                    fin: period.end,
+                    fin: finReelle, // Utiliser le dernier jour ouvrable réel
+                    finSelectionnee: period.end, // Garder la date sélectionnée pour référence
                     jours: period.jours,
                     dates: [...period.dates]
                 });
                 totalDays += period.jours;
                 addedCount++;
             });
-            
+
             // Réinitialiser
             pendingPeriods = [];
             selectedDates = [];
             rangeStart = null;
             selectionMode = false;
-            
+
             renderCalendar();
             renderHistoryTable();
             updateStats();
             calculateBalance(); // Recalculer le solde avec le fractionnement mis à jour
             autoSave(); // Sauvegarder
-            
+
             // Message intelligent
             let message = `✅ <strong>${addedCount} période(s) ajoutée(s) avec succès !</strong><br><br>`;
             message += `📊 Total : ${totalDays} jours ouvrables consommés<br><br>`;
-            
+
             // Calculer le solde restant (après recalcul)
             const totalTaken = leaveHistory.reduce((sum, l) => sum + l.jours, 0);
-            const totalAvailable = currentBalance.principal + currentBalance.cinquieme + 
-                                 currentBalance.fractionnement + currentBalance.anciennete + 
-                                 currentBalance.enfant + currentBalance.report;
+            const totalAvailable = currentBalance.principal + currentBalance.cinquieme +
+                currentBalance.fractionnement + currentBalance.anciennete +
+                currentBalance.enfant + currentBalance.report;
             const remaining = totalAvailable - totalTaken;
-            
+
             message += `💰 <strong>Solde restant estimé :</strong> ${remaining} jours`;
-            
+
             if (remaining < 5) {
                 message += `<br>⚠️ Attention, votre solde est faible. Planifiez bien vos prochaines périodes.`;
             }
-            
+
             updateAIMessage(message, 'success');
             updateSelectionInfo();
         }
 
         function confirmSinglePeriod(index) {
             if (index < 0 || index >= pendingPeriods.length) return;
-            
+
             const period = pendingPeriods[index];
-            const startDate = new Date(period.start);
-            const month = startDate.getMonth();
-            
+            const start = new Date(period.start);
+            const end = new Date(period.end);
+            const month = start.getMonth();
+
+            // Validation : obligation de poser les congés 1 mois à l'avance
+            const advanceError = validateOneMonthAdvance(start);
+            if (advanceError) {
+                updateAIMessage(advanceError, 'error');
+                return;
+            }
+
+            // Validation : délai minimum entre périodes
+            const gapError = validatePeriodGap(start, end);
+            if (gapError && !gapError.includes('Règle entreprise')) { // Éviter les doublons
+                updateAIMessage(gapError, 'error');
+                return;
+            }
+
+            // Règle CNETP : stocker le dernier jour ouvrable réel, pas la date de fin sélectionnée
+            const finReelle = period.lastOuvrable || period.end;
             leaveHistory.push({
                 debut: period.start,
-                fin: period.end,
+                fin: finReelle, // Utiliser le dernier jour ouvrable réel
+                finSelectionnee: period.end, // Garder la date sélectionnée pour référence
                 jours: period.jours,
                 dates: [...period.dates]
             });
-            
+
             // Retirer de la liste des périodes en attente
             pendingPeriods.splice(index, 1);
-            
+
             renderCalendar();
             renderHistoryTable();
             updateStats();
             calculateBalance(); // Recalculer le solde avec le fractionnement mis à jour
             autoSave(); // Sauvegarder
             updateSelectionInfo();
-            
+
             // Message intelligent avec conseils
             let message = `✅ <strong>Période ajoutée avec succès !</strong><br><br>`;
             message += `📅 Du ${formatDisplayDate(period.start)} au ${formatDisplayDate(period.end)}<br>`;
             message += `📊 ${period.jours} jours ouvrables consommés<br><br>`;
-            
+
             // Conseils selon la période
             if (month >= 4 && month <= 9) {
                 message += `☀️ <strong>Période estivale</strong> : `;
@@ -1937,30 +2280,30 @@
                     message += `Pour optimiser, essayez de prendre 3-6 jours du principal en hiver pour obtenir le fractionnement.`;
                 }
             }
-            
+
             // Calculer le solde restant
             const totalTaken = leaveHistory.reduce((sum, l) => sum + l.jours, 0);
-            const totalAvailable = currentBalance.principal + currentBalance.cinquieme + 
-                                 currentBalance.fractionnement + currentBalance.anciennete + 
-                                 currentBalance.enfant + currentBalance.report;
+            const totalAvailable = currentBalance.principal + currentBalance.cinquieme +
+                currentBalance.fractionnement + currentBalance.anciennete +
+                currentBalance.enfant + currentBalance.report;
             const remaining = totalAvailable - totalTaken;
-            
+
             message += `<br><br>💰 <strong>Solde restant estimé :</strong> ${remaining} jours`;
-            
+
             if (remaining < 5) {
                 message += `<br>⚠️ Attention, votre solde est faible. Planifiez bien vos prochaines périodes.`;
             }
-            
+
             updateAIMessage(message, 'success');
         }
 
         function removePendingPeriod(index) {
             if (index < 0 || index >= pendingPeriods.length) return;
-            
+
             pendingPeriods.splice(index, 1);
             renderCalendar();
             updateSelectionInfo();
-            
+
             if (pendingPeriods.length === 0 && !selectionMode) {
                 updateAIMessage('ℹ️ Période supprimée. Vous pouvez continuer à sélectionner d\'autres périodes.', 'info');
             }
@@ -1987,7 +2330,7 @@
                 updateAIMessage('ℹ️ Aucune sélection en cours.', 'info');
                 return;
             }
-            
+
             if (confirm('Êtes-vous sûr de vouloir effacer toutes les périodes sélectionnées ?')) {
                 pendingPeriods = [];
                 selectedDates = [];
@@ -2021,7 +2364,7 @@
         function optimizeSelection() {
             // Utiliser la période en cours de sélection ou la dernière période en attente
             let periodToOptimize = null;
-            
+
             if (selectedDates.length > 0 && selectionMode) {
                 // Période en cours de sélection
                 const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
@@ -2042,12 +2385,12 @@
             const start = new Date(periodToOptimize.start);
             const end = new Date(periodToOptimize.end);
             const workDays = periodToOptimize.jours;
-            
+
             const optimizations = generateOptimizations(start, end, workDays);
             renderOptimizations(optimizations);
-            
+
             let message = `🎯 J'ai analysé votre période et trouvé ${optimizations.length} optimisation(s) possible(s) !`;
-            
+
             // Conseils personnalisés selon la période
             const month = start.getMonth();
             if (month >= 4 && month <= 9) {
@@ -2060,13 +2403,13 @@
             } else {
                 message += '<br><br>❄️ <strong>Période hivernale</strong> : Excellente stratégie pour optimiser le fractionnement !';
             }
-            
+
             if (pendingPeriods.length > 1) {
                 message += `<br><br>💡 Vous avez ${pendingPeriods.length} périodes en attente. Vous pouvez optimiser chaque période individuellement.`;
             }
-            
+
             updateAIMessage(message, 'success');
-            
+
             // Suggestions supplémentaires
             if (optimizations.length > 0) {
                 optimizations.forEach(opt => {
@@ -2083,7 +2426,7 @@
 
         function generateOptimizations(start, end, currentDays) {
             const optimizations = [];
-            
+
             // Optimisation 1 : Ponts
             const bridges = findBridges(start, end);
             if (bridges.length > 0) {
@@ -2100,25 +2443,25 @@
                     });
                 });
             }
-            
+
             // Optimisation 2 : Fractionnement
             const fractOptim = optimizeFractionnement(start, end, currentDays);
             if (fractOptim) {
                 optimizations.push(fractOptim);
             }
-            
+
             // Optimisation 3 : Weekends
             const weekendOptim = optimizeWeekends(start, end, currentDays);
             if (weekendOptim) {
                 optimizations.push(weekendOptim);
             }
-            
+
             // Optimisation 4 : Période estivale
             const summerOptim = optimizeSummerPeriod(start, end, currentDays);
             if (summerOptim) {
                 optimizations.push(summerOptim);
             }
-            
+
             return optimizations;
         }
 
@@ -2129,11 +2472,11 @@
                 const diffDays = Math.abs((holidayDate - start) / (1000 * 60 * 60 * 24));
                 return diffDays <= 5;
             });
-            
+
             nearby.forEach(holiday => {
                 const holidayDate = new Date(holiday.date);
                 const dayOfWeek = holidayDate.getDay();
-                
+
                 if (dayOfWeek === 4) {
                     bridges.push({
                         holiday: holiday.nom,
@@ -2143,7 +2486,7 @@
                         newEnd: formatDate(new Date(holidayDate.getFullYear(), holidayDate.getMonth(), holidayDate.getDate() + 3))
                     });
                 }
-                
+
                 if (dayOfWeek === 2) {
                     bridges.push({
                         holiday: holiday.nom,
@@ -2154,13 +2497,13 @@
                     });
                 }
             });
-            
+
             return bridges;
         }
 
         function optimizeFractionnement(start, end, currentDays) {
             const month = start.getMonth();
-            
+
             if (month >= 4 && month <= 9) {
                 if (currentDays >= 12) {
                     const winterDaysNeeded = 6;
@@ -2175,13 +2518,13 @@
                     };
                 }
             }
-            
+
             return null;
         }
 
         function optimizeWeekends(start, end, currentDays) {
             const startDay = start.getDay();
-            
+
             if (startDay !== 1 && startDay !== 0) {
                 const daysToMonday = startDay === 0 ? 1 : (8 - startDay);
                 return {
@@ -2192,13 +2535,13 @@
                     tip: `En calant vos congés du lundi au vendredi, vous profitez des weekends sans les consommer`
                 };
             }
-            
+
             return null;
         }
 
         function optimizeSummerPeriod(start, end, currentDays) {
             const month = start.getMonth();
-            
+
             if (month >= 4 && month <= 9 && currentDays >= 12) {
                 return {
                     title: `☀️ Période estivale optimale`,
@@ -2210,13 +2553,13 @@
                     tip: `Parfait pour obtenir vos jours de fractionnement !`
                 };
             }
-            
+
             return null;
         }
 
         function renderOptimizations(optimizations) {
             const container = document.getElementById('optimizations');
-            
+
             if (optimizations.length === 0) {
                 container.innerHTML = `
                     <p style="color: var(--text-light); text-align: center; padding: 40px;">
@@ -2225,7 +2568,7 @@
                 `;
                 return;
             }
-            
+
             container.innerHTML = optimizations.map((opt, index) => `
                 <div class="optimization-card" onclick="applyOptimization(${index})">
                     <div class="optimization-header">
@@ -2266,7 +2609,7 @@
             reprise.setDate(reprise.getDate() + 1);
             const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
             const workDays = countOuvrables(start, lastOuvrable, weeklyRestDay);
-            
+
             pendingPeriods.push({
                 start: startStr,
                 end: endStr,
@@ -2274,23 +2617,23 @@
                 dates: dates,
                 jours: workDays
             });
-            
+
             // Retirer cette suggestion de la liste (mais garder les autres)
-            suggestedPeriods = suggestedPeriods.filter(s => 
+            suggestedPeriods = suggestedPeriods.filter(s =>
                 !(s.start === startStr && s.end === endStr)
             );
-            
+
             // Si plus de suggestions, cacher l'info
             if (suggestedPeriods.length === 0) {
                 document.getElementById('suggestionsInfo').style.display = 'none';
                 document.getElementById('clearSuggestionsBtn').style.display = 'none';
             }
-            
+
             // Naviguer vers le mois de la période
             currentDate = new Date(start);
             renderCalendar();
             updateSelectionInfo();
-            
+
             updateAIMessage(`✅ Période suggérée ajoutée à votre planning ! Du ${formatDisplayDate(startStr)} au ${formatDisplayDate(endStr)} (${workDays} jours ouvrables).`, 'success');
         }
 
@@ -2298,17 +2641,17 @@
         function suggestBridges() {
             const currentYear = new Date().getFullYear();
             const bridges = [];
-            
+
             JOURS_FERIES_2025.forEach(holiday => {
                 const holidayDate = new Date(holiday.date);
                 const dayOfWeek = holidayDate.getDay();
-                
+
                 if (dayOfWeek === 4) { // Jeudi
                     const friday = new Date(holidayDate);
                     friday.setDate(friday.getDate() + 1);
                     const startDate = formatDate(holidayDate);
                     const endDate = formatDate(friday);
-                    
+
                     // Générer les dates
                     const dates = [];
                     let current = new Date(holidayDate);
@@ -2316,7 +2659,7 @@
                         dates.push(formatDate(current));
                         current.setDate(current.getDate() + 1);
                     }
-                    
+
                     bridges.push({
                         name: holiday.nom,
                         date: holidayDate,
@@ -2332,7 +2675,7 @@
                     monday.setDate(monday.getDate() - 1);
                     const startDate = formatDate(monday);
                     const endDate = formatDate(holidayDate);
-                    
+
                     // Générer les dates
                     const dates = [];
                     let current = new Date(monday);
@@ -2340,7 +2683,7 @@
                         dates.push(formatDate(current));
                         current.setDate(current.getDate() + 1);
                     }
-                    
+
                     bridges.push({
                         name: holiday.nom,
                         date: holidayDate,
@@ -2353,12 +2696,12 @@
                     });
                 }
             });
-            
+
             if (bridges.length === 0) {
                 updateAIMessage('ℹ️ Aucun pont optimal détecté pour cette année. Les jours fériés ne tombent pas sur des jeudis ou mardis.', 'info');
                 return;
             }
-            
+
             // Afficher les suggestions sur le calendrier
             suggestedPeriods = bridges.map(bridge => ({
                 start: bridge.start,
@@ -2367,18 +2710,18 @@
                 type: 'bridge',
                 name: bridge.name
             }));
-            
+
             // Afficher l'info et le bouton pour effacer
             document.getElementById('suggestionsInfo').style.display = 'block';
             document.getElementById('clearSuggestionsBtn').style.display = 'inline-flex';
-            
+
             // Naviguer vers le premier pont
             if (bridges.length > 0) {
                 const firstBridge = bridges[0];
                 currentDate = new Date(firstBridge.date);
                 renderCalendar();
             }
-            
+
             let message = `🌉 <strong>Meilleurs ponts de l'année ${currentYear} :</strong><br><br>`;
             bridges.forEach((bridge, index) => {
                 message += `${index + 1}. <strong>${bridge.name}</strong> (${formatDisplayDate(bridge.start)} → ${formatDisplayDate(bridge.end)})<br>`;
@@ -2386,9 +2729,9 @@
                 message += `   → Gain : ${bridge.totalDays} jours de repos pour ${bridge.daysNeeded} jour de congé<br><br>`;
             });
             message += `💡 <em>Les périodes suggérées sont maintenant visibles sur le calendrier en jaune/orange. Cliquez sur une période pour l'ajouter à votre planning.</em>`;
-            
+
             updateAIMessage(message, 'success');
-            
+
             // Ajouter des suggestions pour appliquer chaque pont
             bridges.forEach((bridge, index) => {
                 addAISuggestion(
@@ -2402,13 +2745,13 @@
         function suggestSummerPeriod() {
             const today = new Date();
             const currentYear = today.getFullYear();
-            
+
             // Suggérer une période estivale de 12 jours minimum
             const suggestedStart = new Date(currentYear, 4, 15); // 15 mai
             const suggestedEnd = new Date(currentYear, 4, 26); // 26 mai (12 jours ouvrables)
             const startStr = formatDate(suggestedStart);
             const endStr = formatDate(suggestedEnd);
-            
+
             // Générer toutes les dates
             const dates = [];
             let current = new Date(suggestedStart);
@@ -2416,11 +2759,11 @@
                 dates.push(formatDate(current));
                 current.setDate(current.getDate() + 1);
             }
-            
+
             const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
             const lastOuvrable = getLastOuvrableBefore(new Date(suggestedEnd.getTime() + 86400000), weeklyRestDay);
             const workDays = countOuvrables(suggestedStart, lastOuvrable, weeklyRestDay);
-            
+
             // Afficher la suggestion sur le calendrier
             suggestedPeriods = [{
                 start: startStr,
@@ -2429,15 +2772,15 @@
                 type: 'summer',
                 name: 'Période estivale optimale'
             }];
-            
+
             // Afficher l'info et le bouton pour effacer
             document.getElementById('suggestionsInfo').style.display = 'block';
             document.getElementById('clearSuggestionsBtn').style.display = 'inline-flex';
-            
+
             // Naviguer vers le mois de mai
             currentDate = new Date(suggestedStart);
             renderCalendar();
-            
+
             let message = `☀️ <strong>Suggestion de période estivale pour le fractionnement :</strong><br><br>`;
             message += `📅 <strong>Période recommandée :</strong> Du ${formatDisplayDate(startStr)} au ${formatDisplayDate(endStr)}<br>`;
             message += `📊 <strong>Jours ouvrables :</strong> ${workDays} jours<br><br>`;
@@ -2446,9 +2789,9 @@
             message += `• Être éligible au fractionnement si vous gardez 3-6 jours du principal pour l'hiver<br>`;
             message += `• Profiter d'une belle période estivale<br><br>`;
             message += `💡 <em>La période suggérée est maintenant visible sur le calendrier en jaune/orange. Cliquez sur "Appliquer cette suggestion" pour l'ajouter à votre planning.</em>`;
-            
+
             updateAIMessage(message, 'success');
-            
+
             addAISuggestion(
                 'Appliquer cette suggestion',
                 `Sélectionner la période du ${formatDisplayDate(startStr)} au ${formatDisplayDate(endStr)}`,
@@ -2459,13 +2802,13 @@
         function suggestWinterPeriod() {
             const today = new Date();
             const currentYear = today.getFullYear();
-            
+
             // Suggérer une période hivernale de 3-6 jours
             const suggestedStart = new Date(currentYear, 11, 23); // 23 décembre
             const suggestedEnd = new Date(currentYear, 11, 27); // 27 décembre
             const startStr = formatDate(suggestedStart);
             const endStr = formatDate(suggestedEnd);
-            
+
             // Générer toutes les dates
             const dates = [];
             let current = new Date(suggestedStart);
@@ -2473,11 +2816,11 @@
                 dates.push(formatDate(current));
                 current.setDate(current.getDate() + 1);
             }
-            
+
             const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
             const lastOuvrable = getLastOuvrableBefore(new Date(suggestedEnd.getTime() + 86400000), weeklyRestDay);
             const workDays = countOuvrables(suggestedStart, lastOuvrable, weeklyRestDay);
-            
+
             // Afficher la suggestion sur le calendrier
             suggestedPeriods = [{
                 start: startStr,
@@ -2486,15 +2829,15 @@
                 type: 'winter',
                 name: 'Période hivernale optimale'
             }];
-            
+
             // Afficher l'info et le bouton pour effacer
             document.getElementById('suggestionsInfo').style.display = 'block';
             document.getElementById('clearSuggestionsBtn').style.display = 'inline-flex';
-            
+
             // Naviguer vers le mois de décembre
             currentDate = new Date(suggestedStart);
             renderCalendar();
-            
+
             let message = `❄️ <strong>Suggestion de période hivernale pour optimiser le fractionnement :</strong><br><br>`;
             message += `📅 <strong>Période recommandée :</strong> Du ${formatDisplayDate(startStr)} au ${formatDisplayDate(endStr)}<br>`;
             message += `📊 <strong>Jours ouvrables :</strong> ${workDays} jours<br><br>`;
@@ -2503,9 +2846,9 @@
             message += `• Obtenir +2 jours de fractionnement si vous avez 6 jours ou +1 jour si vous avez 3 jours<br>`;
             message += `• Profiter des fêtes de fin d'année<br><br>`;
             message += `💡 <em>La période suggérée est maintenant visible sur le calendrier en jaune/orange. Cliquez sur "Appliquer cette suggestion" pour l'ajouter à votre planning.</em>`;
-            
+
             updateAIMessage(message, 'success');
-            
+
             addAISuggestion(
                 'Appliquer cette suggestion',
                 `Sélectionner la période du ${formatDisplayDate(startStr)} au ${formatDisplayDate(endStr)}`,
@@ -2515,43 +2858,43 @@
 
         function generateYearlyPlan() {
             const annualRights = parseInt(document.getElementById('annualRights').value) || 30;
-            const totalDays = currentBalance.principal + currentBalance.cinquieme + 
-                            currentBalance.fractionnement + currentBalance.anciennete + 
-                            currentBalance.enfant + currentBalance.report;
-            
+            const totalDays = currentBalance.principal + currentBalance.cinquieme +
+                currentBalance.fractionnement + currentBalance.anciennete +
+                currentBalance.enfant + currentBalance.report;
+
             let message = `📊 <strong>Plan d'optimisation annuel personnalisé :</strong><br><br>`;
             message += `📈 <strong>Votre situation actuelle :</strong><br>`;
             message += `• Total de jours disponibles : ${totalDays} jours<br>`;
             message += `• Principal : ${currentBalance.principal} jours<br>`;
             message += `• 5ème semaine : ${currentBalance.cinquieme} jours<br>`;
             message += `• Fractionnement actuel : ${currentBalance.fractionnement} jours<br><br>`;
-            
+
             message += `🎯 <strong>Stratégie recommandée :</strong><br>`;
             message += `1. <strong>Période estivale (Mai-Octobre) :</strong><br>`;
             message += `   → Prenez au moins 12 jours continus du principal en été<br>`;
             message += `   → Idéalement 18-20 jours pour profiter pleinement<br><br>`;
-            
+
             message += `2. <strong>Période hivernale (Novembre-Avril) :</strong><br>`;
             message += `   → Réservez 6 jours du principal pour l'hiver<br>`;
             message += `   → Cela vous donnera +2 jours de fractionnement<br><br>`;
-            
+
             message += `3. <strong>Optimisation des ponts :</strong><br>`;
             message += `   → Utilisez les ponts pour maximiser vos weekends<br>`;
             message += `   → 1 jour de congé peut donner 4 jours de repos<br><br>`;
-            
+
             const potentialGain = 2; // Fractionnement maximum
             message += `💰 <strong>Gain potentiel :</strong> +${potentialGain} jours de fractionnement si vous suivez cette stratégie !<br><br>`;
-            
+
             message += `💡 <em>Utilisez les suggestions ci-dessus pour planifier vos périodes spécifiques.</em>`;
-            
+
             updateAIMessage(message, 'success');
-            
+
             // Analyser l'historique existant
             if (leaveHistory.length > 0) {
                 let totalTaken = 0;
                 let summerTaken = 0;
                 let winterTaken = 0;
-                
+
                 leaveHistory.forEach(leave => {
                     totalTaken += leave.jours;
                     const start = new Date(leave.debut);
@@ -2562,7 +2905,7 @@
                         winterTaken += leave.jours;
                     }
                 });
-                
+
                 addAISuggestion(
                     'Analyse de votre historique',
                     `Vous avez déjà pris ${totalTaken} jours (${summerTaken} en été, ${winterTaken} en hiver). Cliquez pour une analyse détaillée.`,
@@ -2573,8 +2916,12 @@
 
         // ===== BALANCE =====
         function calculateBalance() {
+            // Recalculer l'ancienneté d'abord
+            const ancienneteDays = calculateSeniorityDays();
+            document.getElementById('anciennete').value = ancienneteDays;
+
             currentBalance = {
-                anciennete: parseInt(document.getElementById('anciennete').value) || 0,
+                anciennete: ancienneteDays,
                 enfant: parseInt(document.getElementById('enfant').value) || 0,
                 report: parseInt(document.getElementById('report').value) || 0,
                 cinquieme: parseInt(document.getElementById('cinquieme').value) || 6,
@@ -2594,9 +2941,9 @@
             document.getElementById('balanceEnfant').textContent = currentBalance.enfant;
             document.getElementById('balanceReport').textContent = currentBalance.report;
 
-            const total = currentBalance.principal + currentBalance.cinquieme + 
-                         currentBalance.fractionnement + currentBalance.anciennete + 
-                         currentBalance.enfant + currentBalance.report;
+            const total = currentBalance.principal + currentBalance.cinquieme +
+                currentBalance.fractionnement + currentBalance.anciennete +
+                currentBalance.enfant + currentBalance.report;
 
             updateAIMessage(`✅ Solde recalculé ! Vous avez <strong>${total} jours ouvrables</strong> disponibles au total.`, 'success');
         }
@@ -2613,7 +2960,7 @@
 
             const start = new Date(startDate);
             const end = new Date(endDate);
-            
+
             if (end < start) {
                 updateAIMessage('❌ La date de fin doit être après la date de début.', 'error');
                 return;
@@ -2622,10 +2969,10 @@
             const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
             const reprise = new Date(end);
             reprise.setDate(reprise.getDate() + 1);
-            
+
             const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
             const daysNeeded = countOuvrables(start, lastOuvrable, weeklyRestDay);
-            
+
             const result = imputeDays(currentBalance, daysNeeded);
 
             let html = `
@@ -2650,12 +2997,12 @@
                         <div class="gain-label">🎯 Imputation CNETP</div>
                         <div class="gain-value">${result.totalConsumed}j</div>
                         <div style="font-size: 0.9rem; margin-top: 10px;">
-                            ${Object.entries(result.consumed).filter(([k,v]) => v > 0).map(([k,v]) => `${k}: ${v}j`).join('<br>')}
+                            ${Object.entries(result.consumed).filter(([k, v]) => v > 0).map(([k, v]) => `${k}: ${v}j`).join('<br>')}
                         </div>
                     </div>
                     <div class="loss">
                         <div class="loss-label">📉 Solde après</div>
-                        <div class="loss-value">${Object.values(result.remaining).reduce((a,b) => a+b, 0)}j</div>
+                        <div class="loss-value">${Object.values(result.remaining).reduce((a, b) => a + b, 0)}j</div>
                         <div style="font-size: 0.9rem; margin-top: 10px;">
                             Principal: ${result.remaining.principal}j<br>
                             5ème: ${result.remaining.cinquieme}j
@@ -2694,25 +3041,48 @@
                 return;
             }
 
+            // Validation : pas de demi-journées autorisées (règle entreprise)
+            if (manualDays) {
+                const daysValue = parseFloat(manualDays);
+                if (isNaN(daysValue) || daysValue < 0) {
+                    updateAIMessage('❌ Le nombre de jours doit être un nombre positif.', 'error');
+                    return;
+                }
+                if (daysValue % 1 !== 0) {
+                    updateAIMessage('❌ <strong>Règle entreprise :</strong> Les demi-journées de congés payés ne sont plus autorisées. Veuillez saisir un nombre entier de jours.', 'error');
+                    return;
+                }
+            }
+
             const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
             const reprise = new Date(end);
             reprise.setDate(reprise.getDate() + 1);
-            
+
             // Le dernier jour de congé est le dernier jour ouvrable avant la reprise
             const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
             const calculatedDays = manualDays ? parseInt(manualDays) : countOuvrables(start, lastOuvrable, weeklyRestDay);
 
-            // Générer les dates de la période (du début à la fin sélectionnée)
+            // Vérifier que le nombre calculé est un entier (pas de demi-journée)
+            if (calculatedDays % 1 !== 0) {
+                updateAIMessage('❌ <strong>Règle entreprise :</strong> Les demi-journées de congés payés ne sont plus autorisées. Le calcul a généré un nombre décimal, ce qui n\'est pas autorisé.', 'error');
+                return;
+            }
+
+            // Générer les dates de la période (du début au dernier jour ouvrable réel)
             const dates = [];
             let current = new Date(start);
-            while (current <= end) {
+            const lastOuvrableDate = new Date(lastOuvrable);
+            while (current <= lastOuvrableDate) {
                 dates.push(formatDate(current));
                 current.setDate(current.getDate() + 1);
             }
 
+            // Règle CNETP : stocker le dernier jour ouvrable réel, pas la date de fin sélectionnée
+            const lastOuvrableStr = formatDate(lastOuvrable);
             leaveHistory.push({
                 debut: startDate,
-                fin: endDate,
+                fin: lastOuvrableStr, // Utiliser le dernier jour ouvrable réel
+                finSelectionnee: endDate, // Garder la date sélectionnée pour référence
                 jours: calculatedDays,
                 dates: dates
             });
@@ -2722,7 +3092,7 @@
             updateStats();
             calculateBalance(); // Recalculer le solde avec le fractionnement mis à jour
             autoSave(); // Sauvegarder
-            
+
             document.getElementById('newLeaveStart').value = '';
             document.getElementById('newLeaveEnd').value = '';
             document.getElementById('newLeaveDays').value = '';
@@ -2732,7 +3102,7 @@
 
         function renderHistoryTable() {
             const container = document.getElementById('historyTableContainer');
-            
+
             if (leaveHistory.length === 0) {
                 container.innerHTML = `
                     <p style="color: var(--text-light); text-align: center; padding: 20px;">
@@ -2794,7 +3164,7 @@
 
         function clearHistory() {
             if (!confirm('Êtes-vous sûr de vouloir effacer tout l\'historique ?')) return;
-            
+
             leaveHistory = [];
             renderHistoryTable();
             renderCalendar();
@@ -2815,6 +3185,19 @@
                 const data = JSON.parse(input);
                 if (!Array.isArray(data)) {
                     throw new Error('Le JSON doit être un tableau');
+                }
+
+                // Validation : vérifier qu'il n'y a pas de demi-journées (règle entreprise)
+                for (const item of data) {
+                    if (item.jours !== undefined && item.jours !== null) {
+                        const jours = parseFloat(item.jours);
+                        if (isNaN(jours) || jours < 0) {
+                            throw new Error(`Le nombre de jours doit être un nombre positif. Période : ${item.debut} → ${item.fin}`);
+                        }
+                        if (jours % 1 !== 0) {
+                            throw new Error(`Règle entreprise : Les demi-journées de congés payés ne sont plus autorisées. Période : ${item.debut} → ${item.fin} (${jours} jours)`);
+                        }
+                    }
                 }
 
                 leaveHistory = data.map(item => {
@@ -2848,14 +3231,14 @@
                 fin: l.fin,
                 jours: l.jours
             })), null, 2);
-            
+
             const blob = new Blob([json], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = 'historique-conges.json';
             a.click();
-            
+
             updateAIMessage('✅ Historique exporté en JSON !', 'success');
         }
 
@@ -2869,47 +3252,57 @@
             let summerDays = 0;
             let winterDays = 0;
 
-            // Calculer les jours du principal (exclure la 5ème semaine)
+            // Règle CNETP : Séparer le congé principal (24 jours) de la 5ème semaine (6 jours)
+            // Congé principal = 24 premiers jours ouvrables (jours 1 à 24)
+            // 5ème semaine = 6 jours ouvrables (jours 25 à 30)
+            // Le fractionnement se calcule UNIQUEMENT sur les 24 premiers jours (congé principal)
+
             let principalDaysTaken = 0;
             let principalDaysInSummer = 0;
             let principalDaysInWinter = 0;
             let maxContinuousPrincipalSummer = 0;
             let has12ContinuousPrincipalSummer = false;
-            
+
             // Trier les périodes par date
-            const sortedLeaves = [...leaveHistory].sort((a, b) => 
+            const sortedLeaves = [...leaveHistory].sort((a, b) =>
                 new Date(a.debut) - new Date(b.debut)
             );
-            
-            // Simuler l'imputation pour savoir quels jours sont du principal
+
+            // Simuler l'imputation CNETP pour séparer principal (24 jours) de 5ème semaine (6 jours)
+            // Ordre d'imputation : ancienneté, enfant, report, 5ème semaine, fractionnement, principal
             let remainingRights = {
                 anciennete: parseInt(document.getElementById('anciennete').value) || 0,
                 enfant: parseInt(document.getElementById('enfant').value) || 0,
                 report: parseInt(document.getElementById('report').value) || 0,
                 cinquieme: parseInt(document.getElementById('cinquieme').value) || 6,
-                fractionnement: 0,
-                principal: 24
+                fractionnement: 0, // Calculé après, donc 0 pour cette simulation
+                principal: 24 // 24 premiers jours = congé principal
             };
-            
+
             let currentContinuousPrincipal = 0;
             let lastEndDate = null;
-            
+
             sortedLeaves.forEach(leave => {
                 totalDays += leave.jours;
                 const start = new Date(leave.debut);
                 const month = start.getMonth();
                 const end = new Date(leave.fin);
-                
-                // Simuler l'imputation
+
+                // Simuler l'imputation CNETP
+                // L'ordre d'imputation garantit que les 24 premiers jours sont du principal
+                // et que les 6 jours suivants sont de la 5ème semaine
                 const result = imputeDays(remainingRights, leave.jours);
                 remainingRights = result.remaining;
+
+                // Compter UNIQUEMENT les jours du principal (24 premiers jours)
+                // Exclure explicitement la 5ème semaine (result.consumed.CINQUIEME)
                 const principalConsumed = result.consumed.PRINCIPAL;
                 principalDaysTaken += principalConsumed;
-                
+
                 if (month >= 4 && month <= 9) {
                     summerDays += leave.jours;
                     principalDaysInSummer += principalConsumed;
-                    
+
                     // Vérifier la continuité pour les jours du principal uniquement
                     if (lastEndDate && start > lastEndDate) {
                         // Gap détecté, réinitialiser
@@ -2927,15 +3320,14 @@
                     principalDaysInWinter += principalConsumed;
                     currentContinuousPrincipal = 0; // Réinitialiser car on sort de l'été
                 }
-                
+
                 lastEndDate = end;
             });
-            
+
             const annualRights = parseInt(document.getElementById('annualRights').value) || 30;
             const principalRemaining = 24 - principalDaysTaken;
 
             const fractionnement = calculateFractionnement({
-                annualRightsAcquired: annualRights,
                 principalDaysTakenSummer: principalDaysInSummer,
                 principalDaysTakenWinter: principalDaysInWinter,
                 isContinuous12Summer: has12ContinuousPrincipalSummer,
@@ -2959,11 +3351,11 @@
                     </div>
                     <div class="result-item">
                         <span><strong>Jours du principal en été :</strong></span>
-                        <span>${principalDaysTakenSummer} jours</span>
+                        <span>${principalDaysInSummer} jours</span>
                     </div>
                     <div class="result-item">
                         <span><strong>Jours du principal en hiver :</strong></span>
-                        <span>${principalDaysTakenWinter} jours</span>
+                        <span>${principalDaysInWinter} jours</span>
                     </div>
                     <div class="result-item">
                         <span><strong>Plus longue période continue du principal en été :</strong></span>
@@ -2990,20 +3382,37 @@
                     <strong>💡 Recommandations de l'IA :</strong><br>
             `;
 
+            // Messages selon les règles CNETP officielles
             if (!has12ContinuousPrincipalSummer) {
-                analysis += `⚠️ Vous n'avez pas pris 12 jours continus du principal en été. Pour être éligible au fractionnement, vous devez prendre au moins 12 jours continus du principal (pas de la 5ème semaine) entre le 1er mai et le 31 octobre.<br>`;
-            }
-
-            if (principalDaysInWinter >= 6) {
-                analysis += `✅ Excellent ! Vous avez ${principalDaysInWinter} jours du principal en hiver. Cela vous donne droit à +2 jours de fractionnement !<br>`;
-            } else if (principalDaysInWinter >= 3) {
-                analysis += `✅ Bien ! Vous avez ${principalDaysInWinter} jours du principal en hiver. Cela vous donne droit à +1 jour de fractionnement.<br>`;
+                analysis += `⚠️ <strong>Condition 1 non remplie :</strong> Vous n'avez pas pris 12 jours continus du principal en été. Pour être éligible au fractionnement, vous devez prendre au moins 12 jours continus du principal (sur les 24 premiers jours, pas la 5ème semaine) entre le 1er mai et le 31 octobre.<br>`;
             } else {
-                analysis += `💡 Pour optimiser, essayez de laisser 3-6 jours du principal (sur les 24, pas la 5ème semaine) pour la période hivernale afin d'obtenir le fractionnement.<br>`;
+                analysis += `✅ <strong>Condition 1 remplie :</strong> Vous avez pris 12 jours continus du principal en été.<br>`;
             }
 
-            if (fractionnement === 0 && annualRights >= 15) {
-                analysis += `📌 Vous êtes éligible au fractionnement (droits >= 15j) mais vous ne l'obtenez pas encore. Optimisez votre planning !<br>`;
+            // Condition 2 : Maximum de jours en été
+            if (principalDaysInSummer > 21) {
+                analysis += `❌ <strong>Condition 2 non remplie :</strong> Vous avez pris ${principalDaysInSummer} jours du principal en été, ce qui dépasse le maximum de 21 jours. Pour obtenir le fractionnement, vous devez prendre au maximum 21 jours (pour +1 jour) ou 18 jours (pour +2 jours) du principal entre le 1er mai et le 31 octobre.<br>`;
+            } else if (principalDaysInSummer > 18) {
+                analysis += `⚠️ <strong>Condition 2 partielle :</strong> Vous avez pris ${principalDaysInSummer} jours du principal en été. Pour obtenir +2 jours de fractionnement, vous devez prendre au maximum 18 jours. Actuellement, vous pouvez obtenir +1 jour si vous respectez la condition 3.<br>`;
+            } else {
+                analysis += `✅ <strong>Condition 2 remplie :</strong> Vous avez pris ${principalDaysInSummer} jours du principal en été (≤ 18 pour +2 jours, ≤ 21 pour +1 jour).<br>`;
+            }
+
+            // Condition 3 : Jours en hiver
+            if (principalDaysInWinter === 6 && principalDaysInSummer <= 18) {
+                analysis += `✅ <strong>Condition 3 remplie :</strong> Vous avez pris exactement 6 jours du principal en hiver. Avec ${principalDaysInSummer} jours en été (≤ 18), vous obtenez +2 jours de fractionnement ! 🎉<br>`;
+            } else if (principalDaysInWinter >= 3 && principalDaysInWinter <= 5 && principalDaysInSummer <= 21) {
+                analysis += `✅ <strong>Condition 3 remplie :</strong> Vous avez pris ${principalDaysInWinter} jours du principal en hiver (entre 3 et 5). Avec ${principalDaysInSummer} jours en été (≤ 21), vous obtenez +1 jour de fractionnement ! 🎉<br>`;
+            } else if (principalDaysInWinter < 3) {
+                analysis += `❌ <strong>Condition 3 non remplie :</strong> Vous avez pris ${principalDaysInWinter} jour(s) du principal en hiver. Pour obtenir le fractionnement, vous devez prendre 3 à 5 jours (pour +1 jour) ou exactement 6 jours (pour +2 jours) du principal entre le 1er novembre et le 30 avril.<br>`;
+            } else if (principalDaysInWinter > 5 && principalDaysInWinter !== 6) {
+                analysis += `❌ <strong>Condition 3 non remplie :</strong> Vous avez pris ${principalDaysInWinter} jours du principal en hiver. Pour obtenir le fractionnement, vous devez prendre 3 à 5 jours (pour +1 jour) ou exactement 6 jours (pour +2 jours) du principal entre le 1er novembre et le 30 avril.<br>`;
+            } else {
+                analysis += `💡 <strong>Condition 3 :</strong> Vous avez pris ${principalDaysInWinter} jours du principal en hiver. Pour optimiser, prenez 3 à 5 jours (pour +1 jour) ou exactement 6 jours (pour +2 jours) du principal entre le 1er novembre et le 30 avril.<br>`;
+            }
+
+            if (fractionnement === 0) {
+                analysis += `<br>📌 <strong>Résumé :</strong> Vous ne remplissez pas encore toutes les conditions pour obtenir le fractionnement. Vérifiez les 3 conditions ci-dessus et optimisez votre planning !<br>`;
             }
 
             analysis += `</div>`;
@@ -3031,14 +3440,31 @@
 
             leaveHistory.forEach((leave, index) => {
                 const start = new Date(leave.debut);
-                const end = new Date(leave.fin);
+                // Utiliser finSelectionnee si elle existe (pour compatibilité avec anciennes données)
+                // Sinon utiliser fin (qui devrait être le dernier jour ouvrable réel)
+                const endDateStr = leave.finSelectionnee || leave.fin;
+                const end = new Date(endDateStr);
+
+                // Calculer la date de reprise (jour suivant la fin sélectionnée)
                 const reprise = new Date(end);
                 reprise.setDate(reprise.getDate() + 1);
-                
+
+                // Règle CNETP : calculer le dernier jour ouvrable réel avant la reprise
                 const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
                 const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
                 const calculatedDays = countOuvrables(start, lastOuvrable, weeklyRestDay);
                 totalCalculated += calculatedDays;
+
+                // Vérifier et corriger si nécessaire : leave.fin doit être le dernier jour ouvrable réel
+                const lastOuvrableStr = formatDate(lastOuvrable);
+                if (leave.fin !== lastOuvrableStr) {
+                    // Corriger automatiquement la date de fin pour qu'elle soit le dernier jour ouvrable réel
+                    leave.fin = lastOuvrableStr;
+                    if (!leave.finSelectionnee) {
+                        // Si finSelectionnee n'existe pas, la créer avec l'ancienne valeur de fin
+                        leave.finSelectionnee = endDateStr;
+                    }
+                }
 
                 if (leave.jours) {
                     const diff = Math.abs(calculatedDays - leave.jours);
@@ -3127,52 +3553,60 @@
             const fractionnement = calculateFractionnementFromHistory();
             document.getElementById('fractionnement').value = fractionnement;
             currentBalance.fractionnement = fractionnement;
-            
+
             document.getElementById('balanceFractionnement').textContent = fractionnement;
         }
 
         function calculateFractionnementFromHistory() {
             if (leaveHistory.length === 0) return 0;
 
-            // Calculer le total des jours pris
-            const totalDaysTaken = leaveHistory.reduce((sum, l) => sum + l.jours, 0);
-            
-            // Séparer les jours du principal (24 premiers) de la 5ème semaine
-            // L'imputation CNETP consomme d'abord : ancienneté, enfant, report, 5ème semaine, fractionnement, puis principal
-            // Pour le fractionnement, on ne compte QUE les jours du principal
-            
-            let principalDaysTaken = 0;
-            let principalDaysInSummer = 0;
-            let principalDaysInWinter = 0;
-            
+            // Règle CNETP : L'imputation consomme dans l'ordre :
+            // 1. Ancienneté
+            // 2. Enfant
+            // 3. Report
+            // 4. 5ème semaine (6 jours)
+            // 5. Fractionnement (0, 1 ou 2 jours selon les conditions)
+            // 6. Principal (24 jours)
+            //
+            // Le fractionnement se calcule UNIQUEMENT sur les 24 premiers jours (congé principal)
+            // Il faut donc d'abord simuler l'imputation SANS fractionnement pour savoir
+            // combien de jours du principal ont été pris, puis calculer le fractionnement,
+            // puis réimputer avec le fractionnement pour avoir le résultat final.
+
             // Trier les périodes par date
-            const sortedLeaves = [...leaveHistory].sort((a, b) => 
+            const sortedLeaves = [...leaveHistory].sort((a, b) =>
                 new Date(a.debut) - new Date(b.debut)
             );
-            
-            // Simuler l'imputation pour savoir quels jours sont du principal
-            let remainingRights = {
+
+            // ÉTAPE 1 : Simuler l'imputation SANS fractionnement pour calculer le fractionnement
+            let remainingRightsWithoutFractionnement = {
                 anciennete: parseInt(document.getElementById('anciennete').value) || 0,
                 enfant: parseInt(document.getElementById('enfant').value) || 0,
                 report: parseInt(document.getElementById('report').value) || 0,
                 cinquieme: parseInt(document.getElementById('cinquieme').value) || 6,
-                fractionnement: 0,
+                fractionnement: 0, // Pas de fractionnement pour le calcul initial
                 principal: 24
             };
-            
-            // Pour chaque période, simuler l'imputation
+
+            let principalDaysTaken = 0;
+            let principalDaysInSummer = 0;
+            let principalDaysInWinter = 0;
+
+            // Pour chaque période, simuler l'imputation SANS fractionnement
+            // pour déterminer combien de jours du principal ont été pris
             sortedLeaves.forEach(leave => {
-                const result = imputeDays(remainingRights, leave.jours);
-                remainingRights = result.remaining;
-                
-                // Compter combien de jours du principal ont été consommés
+                const result = imputeDays(remainingRightsWithoutFractionnement, leave.jours);
+                remainingRightsWithoutFractionnement = result.remaining;
+
+                // Compter UNIQUEMENT les jours du principal (24 premiers jours)
+                // Les jours de la 5ème semaine (CINQUIEME) ne comptent PAS pour le fractionnement
                 const principalConsumed = result.consumed.PRINCIPAL;
                 principalDaysTaken += principalConsumed;
-                
+
                 // Déterminer si c'est en été ou hiver
                 const start = new Date(leave.debut);
                 const month = start.getMonth();
-                
+
                 if (month >= 4 && month <= 9) {
                     // Période estivale (1er mai - 31 octobre)
                     principalDaysInSummer += principalConsumed;
@@ -3181,36 +3615,37 @@
                     principalDaysInWinter += principalConsumed;
                 }
             });
-            
+
             // Vérifier les 12 jours continus du principal en été
             // Il faut trouver une période continue de 12 jours ou plus du principal en été
             let has12ContinuousSummer = false;
             let maxContinuousPrincipalSummer = 0;
             let currentContinuous = 0;
-            
+
             // Trier les périodes estivales par date
             const summerLeaves = sortedLeaves.filter(leave => {
                 const start = new Date(leave.debut);
                 const month = start.getMonth();
                 return month >= 4 && month <= 9;
             }).sort((a, b) => new Date(a.debut) - new Date(b.debut));
-            
-            // Simuler à nouveau pour trouver les périodes continues du principal
+
+            // Simuler à nouveau pour trouver les périodes continues du principal en été
+            // Toujours SANS fractionnement pour déterminer la continuité des jours du principal
             let tempRights = {
                 anciennete: parseInt(document.getElementById('anciennete').value) || 0,
                 enfant: parseInt(document.getElementById('enfant').value) || 0,
                 report: parseInt(document.getElementById('report').value) || 0,
                 cinquieme: parseInt(document.getElementById('cinquieme').value) || 6,
-                fractionnement: 0,
+                fractionnement: 0, // Pas de fractionnement pour le calcul de continuité
                 principal: 24
             };
-            
+
             let lastEndDate = null;
-            
+
             summerLeaves.forEach(leave => {
                 const leaveStart = new Date(leave.debut);
                 const leaveEnd = new Date(leave.fin);
-                
+
                 // Vérifier si cette période est continue avec la précédente
                 // Deux périodes sont continues si la fin de l'une est juste avant le début de l'autre
                 // (avec au plus 1 jour de gap pour tenir compte des weekends/jours fériés)
@@ -3222,12 +3657,13 @@
                         currentContinuous = 0;
                     }
                 }
-                
+
                 const result = imputeDays(tempRights, leave.jours);
                 tempRights = result.remaining;
                 const principalConsumed = result.consumed.PRINCIPAL;
-                
-                // Ajouter seulement les jours du principal (pas la 5ème semaine)
+
+                // Ajouter UNIQUEMENT les jours du principal (24 premiers jours)
+                // Exclure explicitement la 5ème semaine (CINQUIEME) du calcul de continuité
                 currentContinuous += principalConsumed;
                 if (currentContinuous > maxContinuousPrincipalSummer) {
                     maxContinuousPrincipalSummer = currentContinuous;
@@ -3235,14 +3671,11 @@
                 if (currentContinuous >= 12) {
                     has12ContinuousSummer = true;
                 }
-                
+
                 lastEndDate = leaveEnd;
             });
-            
-            const annualRights = parseInt(document.getElementById('annualRights').value) || 30;
-            
+
             return calculateFractionnement({
-                annualRightsAcquired: annualRights,
                 principalDaysTakenSummer: principalDaysInSummer,
                 principalDaysTakenWinter: principalDaysInWinter,
                 isContinuous12Summer: has12ContinuousSummer,
@@ -3271,10 +3704,11 @@
         }
 
         function isWeekend(date, weeklyRestDay = 0) {
+            // Règles CNETP standard : seul le dimanche (jour 0) est non ouvrable
+            // Le samedi (jour 6) est un jour ouvrable
             const day = new Date(date).getDay();
-            // En CNETP, seul le dimanche est non ouvrable (sauf si c'est le jour de repos hebdomadaire)
-            // Le samedi est un jour ouvrable
-            return day === weeklyRestDay;
+            // Toujours considérer le dimanche comme weekend selon les règles CNETP
+            return day === 0;
         }
 
         function hasLeaveOnDate(dateStr) {
@@ -3282,8 +3716,9 @@
         }
 
         function countWorkDaysFromDates(dates, weeklyRestDay = 0) {
-            // En CNETP, les jours ouvrables sont du lundi au samedi (6 jours/semaine)
-            // Seul le dimanche (ou le jour de repos hebdomadaire) et les jours fériés sont non ouvrables
+            // Règles CNETP standard : les jours ouvrables sont du lundi au samedi (6 jours/semaine)
+            // Seul le dimanche (jour 0) et les jours fériés sont non ouvrables
+            // Le samedi (jour 6) est un jour ouvrable
             return dates.filter(date => {
                 const dateObj = new Date(date);
                 return isOuvrable(dateObj, weeklyRestDay);
@@ -3296,13 +3731,19 @@
                 const data = {
                     leaveHistory: leaveHistory,
                     currentBalance: currentBalance,
-                    annualRights: document.getElementById('annualRights').value,
-                    anciennete: document.getElementById('anciennete').value,
-                    enfant: document.getElementById('enfant').value,
-                    report: document.getElementById('report').value,
-                    cinquieme: document.getElementById('cinquieme').value,
-                    weeklyRestDay: document.getElementById('weeklyRestDay').value,
-                    lastSaved: new Date().toISOString()
+                    config: {
+                        annualRights: parseInt(document.getElementById('annualRights').value),
+                        userCategory: document.getElementById('userCategory').value,
+                        serviceYears: parseInt(document.getElementById('serviceYears').value),
+                        companySeniority: parseInt(document.getElementById('companySeniority').value),
+                        professionSeniority: parseInt(document.getElementById('professionSeniority').value),
+                        // anciennete est calculé, on ne le sauvegarde pas forcément comme config brute mais c'est ok de le garder pour cache
+                        anciennete: parseInt(document.getElementById('anciennete').value),
+                        enfant: parseInt(document.getElementById('enfant').value),
+                        report: parseInt(document.getElementById('report').value),
+                        cinquieme: parseInt(document.getElementById('cinquieme').value),
+                        weeklyRestDay: parseInt(document.getElementById('weeklyRestDay').value)
+                    }, lastSaved: new Date().toISOString()
                 };
                 localStorage.setItem('congesIA_data', JSON.stringify(data));
                 return true;
@@ -3316,27 +3757,39 @@
             try {
                 const saved = localStorage.getItem('congesIA_data');
                 if (!saved) return false;
-                
+
                 const data = JSON.parse(saved);
-                
+
                 // Restaurer l'historique
                 if (data.leaveHistory && Array.isArray(data.leaveHistory)) {
                     leaveHistory = data.leaveHistory;
                 }
-                
+
                 // Restaurer le solde
                 if (data.currentBalance) {
                     currentBalance = data.currentBalance;
                 }
-                
+
                 // Restaurer les champs de formulaire
-                if (data.annualRights) document.getElementById('annualRights').value = data.annualRights;
-                if (data.anciennete) document.getElementById('anciennete').value = data.anciennete;
-                if (data.enfant) document.getElementById('enfant').value = data.enfant;
-                if (data.report) document.getElementById('report').value = data.report;
-                if (data.cinquieme) document.getElementById('cinquieme').value = data.cinquieme;
-                if (data.weeklyRestDay) document.getElementById('weeklyRestDay').value = data.weeklyRestDay;
-                
+                // Configuration
+                document.getElementById('annualRights').value = data.config.annualRights || 30;
+                document.getElementById('userCategory').value = data.config.userCategory || 'ouvrier';
+                document.getElementById('serviceYears').value = data.config.serviceYears || 0;
+                document.getElementById('companySeniority').value = data.config.companySeniority || 0;
+                document.getElementById('professionSeniority').value = data.config.professionSeniority || 0;
+
+                // Initialiser l'affichage des inputs
+                toggleSeniorityInputs();
+
+                // Recalculer l'ancienneté
+                const ancienneteDays = calculateSeniorityDays();
+                document.getElementById('anciennete').value = ancienneteDays;
+
+                document.getElementById('enfant').value = data.config.enfant || 0;
+                document.getElementById('report').value = data.config.report || 0;
+                document.getElementById('cinquieme').value = data.config.cinquieme || 6;
+                document.getElementById('weeklyRestDay').value = data.config.weeklyRestDay || 0;
+
                 return true;
             } catch (e) {
                 console.error('Erreur lors du chargement:', e);
@@ -3365,7 +3818,7 @@
             const currentYear = today.getFullYear();
             const may15 = new Date(currentYear, 4, 15); // 15 mai
             const daysUntilMay15 = Math.floor((may15 - today) / (1000 * 60 * 60 * 24));
-            
+
             // Si on est avant le 15 mai et qu'il reste moins de 30 jours
             if (today < may15 && daysUntilMay15 <= 30 && daysUntilMay15 > 0) {
                 const alertDiv = document.createElement('div');
@@ -3379,7 +3832,7 @@
                         Assurez-vous d'avoir planifié toutes vos périodes avant cette date.
                     </div>
                 `;
-                
+
                 // Ajouter l'alerte après l'agent IA
                 const aiAgent = document.querySelector('.ai-agent');
                 if (aiAgent && !document.getElementById('may15Alert')) {
@@ -3390,7 +3843,7 @@
                 // Si on est après le 15 mai, vérifier l'année suivante
                 const nextMay15 = new Date(currentYear + 1, 4, 15);
                 const daysUntilNextMay15 = Math.floor((nextMay15 - today) / (1000 * 60 * 60 * 24));
-                
+
                 if (daysUntilNextMay15 <= 30 && daysUntilNextMay15 > 0) {
                     const alertDiv = document.createElement('div');
                     alertDiv.className = 'audit-alert warning';
@@ -3402,7 +3855,7 @@
                             Il reste <strong>${daysUntilNextMay15} jour(s)</strong> avant la date limite du 15 mai ${currentYear + 1} pour poser vos congés selon les règles CNETP.
                         </div>
                     `;
-                    
+
                     const aiAgent = document.querySelector('.ai-agent');
                     if (aiAgent && !document.getElementById('may15Alert')) {
                         alertDiv.id = 'may15Alert';
@@ -3413,33 +3866,33 @@
         }
 
         // ===== INITIALISATION =====
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Charger les données sauvegardées
             const loaded = loadFromLocalStorage();
             if (loaded) {
                 updateAIMessage('✅ Données chargées depuis la sauvegarde locale.', 'success');
             }
-            
+
             const today = new Date();
             const nextWeek = new Date(today);
             nextWeek.setDate(nextWeek.getDate() + 7);
-            
+
             document.getElementById('simStartDate').value = today.toISOString().split('T')[0];
             document.getElementById('simEndDate').value = nextWeek.toISOString().split('T')[0];
-            
+
             calculateBalance();
             renderCalendar();
             renderHistoryTable();
-            
+
             // Vérifier l'échéance du 15 mai
             checkMay15Deadline();
-            
+
             // Suggestions initiales de l'IA
             setTimeout(() => {
-                const totalDays = currentBalance.principal + currentBalance.cinquieme + 
-                                currentBalance.fractionnement + currentBalance.anciennete + 
-                                currentBalance.enfant + currentBalance.report;
-                
+                const totalDays = currentBalance.principal + currentBalance.cinquieme +
+                    currentBalance.fractionnement + currentBalance.anciennete +
+                    currentBalance.enfant + currentBalance.report;
+
                 if (leaveHistory.length === 0) {
                     addAISuggestion(
                         'Commencer votre planification',
@@ -3454,10 +3907,11 @@
                     );
                 }
             }, 1000);
-            
+
             // Sauvegarder automatiquement toutes les 30 secondes
             setInterval(autoSave, 30000);
         });
     </script>
 </body>
+
 </html>
