@@ -1070,11 +1070,11 @@
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('calendar')">📅 Calendrier</button>
-            <button class="tab" onclick="switchTab('balance')">📊 Mon Solde</button>
-            <button class="tab" onclick="switchTab('simulate')">🎯 Simulation</button>
-            <button class="tab" onclick="switchTab('history')">📋 Historique</button>
-            <button class="tab" onclick="switchTab('audit')">🔍 Audit</button>
+            <button class="tab active" data-tab="calendar">📅 Calendrier</button>
+            <button class="tab" data-tab="balance">📊 Mon Solde</button>
+            <button class="tab" data-tab="simulate">🎯 Simulation</button>
+            <button class="tab" data-tab="history">📋 Historique</button>
+            <button class="tab" data-tab="audit">🔍 Audit</button>
         </div>
 
         <!-- Tab: Calendrier Interactif -->
@@ -1084,9 +1084,9 @@
                     <h3><span class="card-icon">📅</span> Calendrier Interactif</h3>
 
                     <div class="calendar-header">
-                        <button class="nav-btn" onclick="previousMonth()">◀</button>
+                        <button class="nav-btn" id="prevMonthBtn">◀</button>
                         <div class="current-month" id="currentMonth">Janvier 2025</div>
-                        <button class="nav-btn" onclick="nextMonth()">▶</button>
+                        <button class="nav-btn" id="nextMonthBtn">▶</button>
                     </div>
 
                     <div id="selectionInfo" class="selection-info" style="display: none;">
@@ -1098,9 +1098,9 @@
                         </div>
                         <div
                             style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
-                            <button class="btn btn-success" onclick="confirmAllSelections()">✓ Valider toutes les
+                            <button class="btn btn-success" id="confirmAllBtn">✓ Valider toutes les
                                 périodes</button>
-                            <button class="btn btn-warning" onclick="clearAllSelections()">🗑️ Effacer toutes les
+                            <button class="btn btn-warning" id="clearAllBtn">🗑️ Effacer toutes les
                                 sélections</button>
                         </div>
                     </div>
@@ -1119,10 +1119,10 @@
                         </div>
                     </div>
                     <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="btn btn-primary" onclick="optimizeSelection()">🎯 Optimiser la période</button>
-                        <button class="btn btn-warning" onclick="clearSelection()">🗑️ Effacer sélection en
+                        <button class="btn btn-primary" id="optimizeBtn">🎯 Optimiser la période</button>
+                        <button class="btn btn-warning" id="clearSelectionBtn">🗑️ Effacer sélection en
                             cours</button>
-                        <button class="btn btn-secondary" onclick="clearSuggestions()" id="clearSuggestionsBtn"
+                        <button class="btn btn-secondary" id="clearSuggestionsBtn"
                             style="display: none;">🗑️ Effacer suggestions</button>
                     </div>
                     <div id="suggestionsInfo"
@@ -1156,27 +1156,27 @@
                             <div class="suggestion-card-title">🌉 Optimiser les ponts</div>
                             <div class="suggestion-card-desc">Je peux identifier les meilleurs ponts de l'année pour
                                 maximiser vos jours de repos</div>
-                            <button class="suggestion-card-action" onclick="suggestBridges()">Voir les ponts</button>
+                            <button class="suggestion-card-action" id="suggestBridgesBtn">Voir les ponts</button>
                         </div>
                         <div class="suggestion-card">
                             <div class="suggestion-card-title">☀️ Période estivale</div>
                             <div class="suggestion-card-desc">Planifiez 12 jours continus en été pour obtenir le
                                 fractionnement</div>
-                            <button class="suggestion-card-action" onclick="suggestSummerPeriod()">Suggérer une
+                            <button class="suggestion-card-action" id="suggestSummerBtn">Suggérer une
                                 période</button>
                         </div>
                         <div class="suggestion-card">
                             <div class="suggestion-card-title">❄️ Période hivernale</div>
                             <div class="suggestion-card-desc">Réservez 3-6 jours du principal en hiver pour maximiser le
                                 fractionnement</div>
-                            <button class="suggestion-card-action" onclick="suggestWinterPeriod()">Suggérer une
+                            <button class="suggestion-card-action" id="suggestWinterBtn">Suggérer une
                                 période</button>
                         </div>
                         <div class="suggestion-card">
                             <div class="suggestion-card-title">📊 Analyse complète</div>
                             <div class="suggestion-card-desc">J'analyse votre situation et vous propose un plan
                                 d'optimisation personnalisé</div>
-                            <button class="suggestion-card-action" onclick="generateYearlyPlan()">Générer un
+                            <button class="suggestion-card-action" id="generatePlanBtn">Générer un
                                 plan</button>
                         </div>
                     </div>
@@ -1260,7 +1260,7 @@
                             <option value="6">Samedi</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary" onclick="calculateBalance(); autoSave();">
+                    <button class="btn btn-primary" id="calculateBalanceBtn">
                         🔄 Recalculer le solde
                     </button>
                 </div>
@@ -1310,7 +1310,7 @@
                         <label>Date de fin</label>
                         <input type="date" id="simEndDate">
                     </div>
-                    <button class="btn btn-primary" onclick="runSimulation()">
+                    <button class="btn btn-primary" id="runSimulationBtn">
                         ▶️ Lancer la simulation
                     </button>
                 </div>
@@ -1347,7 +1347,7 @@
                             ⚠️ Les demi-journées ne sont plus autorisées (règle entreprise)
                         </small>
                     </div>
-                    <button class="btn btn-primary" onclick="addLeavePeriod()">
+                    <button class="btn btn-primary" id="addLeaveBtn">
                         ➕ Ajouter cette période
                     </button>
                     <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--border);">
@@ -1357,7 +1357,7 @@
                             <textarea id="historyInput" rows="3"
                                 placeholder='[{"debut": "2024-05-15", "fin": "2024-05-20", "jours": 5}]'></textarea>
                         </div>
-                        <button class="btn btn-secondary" onclick="importHistory()">
+                        <button class="btn btn-secondary" id="importHistoryBtn">
                             📥 Importer depuis JSON
                         </button>
                     </div>
@@ -1374,18 +1374,18 @@
                         </div>
                     </div>
                     <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="btn btn-success" onclick="analyzeHistory()" id="analyzeBtn"
+                        <button class="btn btn-success" id="analyzeBtn"
                             style="display: none;">
                             🧠 Analyser avec l'IA
                         </button>
-                        <button class="btn btn-secondary" onclick="clearHistory()" id="clearBtn" style="display: none;">
+                        <button class="btn btn-secondary" id="clearBtn" style="display: none;">
                             🗑️ Effacer tout l'historique
                         </button>
-                        <button class="btn btn-secondary" onclick="exportHistory()" id="exportBtn"
+                        <button class="btn btn-secondary" id="exportBtn"
                             style="display: none;">
                             💾 Exporter en JSON
                         </button>
-                        <button class="btn btn-primary" onclick="generateReport()" id="reportBtn"
+                        <button class="btn btn-primary" id="reportBtn"
                             style="display: none; background: var(--vinci-blue);">
                             📄 Exporter le Récapitulatif
                         </button>
@@ -1401,7 +1401,7 @@
                 <p style="margin-bottom: 20px; color: var(--text-light);">
                     Vérifiez que votre décompte de jours sur l'année est correct.
                 </p>
-                <button class="btn btn-primary" onclick="runAudit()">
+                <button class="btn btn-primary" id="runAuditBtn">
                     🔍 Lancer l'audit
                 </button>
                 <div id="auditResults" style="margin-top: 20px;"></div>
@@ -1469,6 +1469,14 @@
         let rangeStart = null;
         let pendingPeriods = []; // Toutes les périodes en attente de validation
         let suggestedPeriods = []; // Périodes suggérées par l'IA pour visualisation
+
+        // ===== FONCTION DE SÉCURITÉ =====
+        function escapeHtml(text) {
+            if (text == null) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
         // ===== FONCTIONS UTILITAIRES CNETP =====
         function isOuvrable(date, weeklyRestDay = 0) {
@@ -1723,10 +1731,21 @@
 
             const suggestion = document.createElement('div');
             suggestion.className = 'ai-suggestion';
-            suggestion.innerHTML = `
-                <div class="ai-suggestion-title">💡 ${title}</div>
-                <div class="ai-suggestion-desc">${description}</div>
-            `;
+            
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'ai-suggestion-title';
+            titleDiv.textContent = '💡 ';
+            const titleSpan = document.createElement('span');
+            titleSpan.textContent = title;
+            titleDiv.appendChild(titleSpan);
+            
+            const descDiv = document.createElement('div');
+            descDiv.className = 'ai-suggestion-desc';
+            descDiv.textContent = description;
+            
+            suggestion.appendChild(titleDiv);
+            suggestion.appendChild(descDiv);
+            
             if (action) {
                 suggestion.onclick = action;
             }
@@ -2101,14 +2120,28 @@
                                 <div class="period-days">${period.jours} jours ouvrables${lastOuvrableInfo}</div>
                             </div>
                             <div class="period-actions">
-                                <button class="btn btn-success btn-small" onclick="confirmSinglePeriod(${index})">✓ Valider</button>
-                                <button class="btn btn-danger btn-small" onclick="removePendingPeriod(${index})">✗ Supprimer</button>
+                                <button class="btn btn-success btn-small" data-action="confirm" data-index="${index}">✓ Valider</button>
+                                <button class="btn btn-danger btn-small" data-action="remove" data-index="${index}">✗ Supprimer</button>
                             </div>
                         </div>
                     `;
                 });
 
                 periodsList.innerHTML = html;
+
+                // Ajouter les gestionnaires d'événements pour les boutons
+                periodsList.querySelectorAll('[data-action="confirm"]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.dataset.index);
+                        confirmSinglePeriod(index);
+                    });
+                });
+                periodsList.querySelectorAll('[data-action="remove"]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.dataset.index);
+                        removePendingPeriod(index);
+                    });
+                });
 
                 // Calculer le total
                 const totalDays = pendingPeriods.reduce((sum, p) => sum + p.jours, 0);
@@ -2646,38 +2679,96 @@
             const container = document.getElementById('optimizations');
 
             if (optimizations.length === 0) {
-                container.innerHTML = `
-                    <p style="color: var(--text-light); text-align: center; padding: 40px;">
-                        Aucune optimisation trouvée pour cette période
-                    </p>
-                `;
+                const p = document.createElement('p');
+                p.style.color = 'var(--text-light)';
+                p.style.textAlign = 'center';
+                p.style.padding = '40px';
+                p.textContent = 'Aucune optimisation trouvée pour cette période';
+                container.innerHTML = '';
+                container.appendChild(p);
                 return;
             }
 
-            container.innerHTML = optimizations.map((opt, index) => `
-                <div class="optimization-card" onclick="applyOptimization(${index})">
-                    <div class="optimization-header">
-                        <div class="optimization-title">${opt.title}</div>
-                        <div class="optimization-badge">+${opt.gain} jour${opt.gain > 1 ? 's' : ''}</div>
-                    </div>
-                    <div class="optimization-details">${opt.description}</div>
-                    ${opt.tip ? `<div style="font-size: 0.9rem; color: var(--text-light); margin-top: 10px;">💡 ${opt.tip}</div>` : ''}
-                    <div class="optimization-gain">
-                        <div class="gain-item">
-                            <div class="gain-label">Jours à poser</div>
-                            <div class="gain-value">${opt.totalDays || selectedDates.length + opt.extraDays}</div>
-                        </div>
-                        <div class="gain-item">
-                            <div class="gain-label">Jours de repos</div>
-                            <div class="gain-value">${(opt.totalDays || selectedDates.length) + opt.gain}</div>
-                        </div>
-                        <div class="gain-item">
-                            <div class="gain-label">Efficacité</div>
-                            <div class="gain-value">${opt.efficiency || 100}%</div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            container.innerHTML = '';
+            optimizations.forEach((opt, index) => {
+                const card = document.createElement('div');
+                card.className = 'optimization-card';
+                card.dataset.optimizationIndex = index;
+                card.addEventListener('click', () => applyOptimization(index));
+
+                const header = document.createElement('div');
+                header.className = 'optimization-header';
+
+                const title = document.createElement('div');
+                title.className = 'optimization-title';
+                title.textContent = opt.title;
+
+                const badge = document.createElement('div');
+                badge.className = 'optimization-badge';
+                badge.textContent = `+${opt.gain} jour${opt.gain > 1 ? 's' : ''}`;
+
+                header.appendChild(title);
+                header.appendChild(badge);
+
+                const details = document.createElement('div');
+                details.className = 'optimization-details';
+                details.textContent = opt.description;
+
+                card.appendChild(header);
+                card.appendChild(details);
+
+                if (opt.tip) {
+                    const tip = document.createElement('div');
+                    tip.style.fontSize = '0.9rem';
+                    tip.style.color = 'var(--text-light)';
+                    tip.style.marginTop = '10px';
+                    tip.textContent = `💡 ${opt.tip}`;
+                    card.appendChild(tip);
+                }
+
+                const gain = document.createElement('div');
+                gain.className = 'optimization-gain';
+
+                const gainItem1 = document.createElement('div');
+                gainItem1.className = 'gain-item';
+                const label1 = document.createElement('div');
+                label1.className = 'gain-label';
+                label1.textContent = 'Jours à poser';
+                const value1 = document.createElement('div');
+                value1.className = 'gain-value';
+                value1.textContent = String(opt.totalDays || selectedDates.length + opt.extraDays);
+                gainItem1.appendChild(label1);
+                gainItem1.appendChild(value1);
+
+                const gainItem2 = document.createElement('div');
+                gainItem2.className = 'gain-item';
+                const label2 = document.createElement('div');
+                label2.className = 'gain-label';
+                label2.textContent = 'Jours de repos';
+                const value2 = document.createElement('div');
+                value2.className = 'gain-value';
+                value2.textContent = String((opt.totalDays || selectedDates.length) + opt.gain);
+                gainItem2.appendChild(label2);
+                gainItem2.appendChild(value2);
+
+                const gainItem3 = document.createElement('div');
+                gainItem3.className = 'gain-item';
+                const label3 = document.createElement('div');
+                label3.className = 'gain-label';
+                label3.textContent = 'Efficacité';
+                const value3 = document.createElement('div');
+                value3.className = 'gain-value';
+                value3.textContent = `${opt.efficiency || 100}%`;
+                gainItem3.appendChild(label3);
+                gainItem3.appendChild(value3);
+
+                gain.appendChild(gainItem1);
+                gain.appendChild(gainItem2);
+                gain.appendChild(gainItem3);
+                card.appendChild(gain);
+
+                container.appendChild(card);
+            });
         }
 
         function applyOptimization(index) {
@@ -3255,7 +3346,7 @@
                         <td>${formatDisplayDate(leave.fin)}</td>
                         <td><strong>${leave.jours}</strong> jours</td>
                         <td>
-                            <button class="btn btn-danger" onclick="removeLeave(${index})" style="padding: 6px 12px; font-size: 0.85rem;">
+                            <button class="btn btn-danger remove-leave-btn" data-index="${index}" style="padding: 6px 12px; font-size: 0.85rem;">
                                 🗑️ Supprimer
                             </button>
                         </td>
@@ -3265,6 +3356,14 @@
 
             html += '</tbody></table></div>';
             container.innerHTML = html;
+
+            // Ajouter les gestionnaires d'événements pour les boutons de suppression
+            container.querySelectorAll('.remove-leave-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const index = parseInt(btn.dataset.index);
+                    removeLeave(index);
+                });
+            });
 
             document.getElementById('analyzeBtn').style.display = 'inline-flex';
             document.getElementById('clearBtn').style.display = 'inline-flex';
@@ -4148,6 +4247,71 @@
                 // Vérifier l'échéance du 15 mai
                 checkMay15Deadline();
 
+                // Ajouter les gestionnaires d'événements pour remplacer les onclick inline
+                // Onglets
+                document.querySelectorAll('[data-tab]').forEach(tab => {
+                    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+                });
+
+                // Navigation calendrier
+                const prevMonthBtn = document.getElementById('prevMonthBtn');
+                if (prevMonthBtn) prevMonthBtn.addEventListener('click', previousMonth);
+                const nextMonthBtn = document.getElementById('nextMonthBtn');
+                if (nextMonthBtn) nextMonthBtn.addEventListener('click', nextMonth);
+
+                // Boutons de sélection
+                const confirmAllBtn = document.getElementById('confirmAllBtn');
+                if (confirmAllBtn) confirmAllBtn.addEventListener('click', confirmAllSelections);
+                const clearAllBtn = document.getElementById('clearAllBtn');
+                if (clearAllBtn) clearAllBtn.addEventListener('click', clearAllSelections);
+                const optimizeBtn = document.getElementById('optimizeBtn');
+                if (optimizeBtn) optimizeBtn.addEventListener('click', optimizeSelection);
+                const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+                if (clearSelectionBtn) clearSelectionBtn.addEventListener('click', clearSelection);
+                const clearSuggestionsBtn = document.getElementById('clearSuggestionsBtn');
+                if (clearSuggestionsBtn) clearSuggestionsBtn.addEventListener('click', clearSuggestions);
+
+                // Suggestions IA
+                const suggestBridgesBtn = document.getElementById('suggestBridgesBtn');
+                if (suggestBridgesBtn) suggestBridgesBtn.addEventListener('click', suggestBridges);
+                const suggestSummerBtn = document.getElementById('suggestSummerBtn');
+                if (suggestSummerBtn) suggestSummerBtn.addEventListener('click', suggestSummerPeriod);
+                const suggestWinterBtn = document.getElementById('suggestWinterBtn');
+                if (suggestWinterBtn) suggestWinterBtn.addEventListener('click', suggestWinterPeriod);
+                const generatePlanBtn = document.getElementById('generatePlanBtn');
+                if (generatePlanBtn) generatePlanBtn.addEventListener('click', generateYearlyPlan);
+
+                // Solde
+                const calculateBalanceBtn = document.getElementById('calculateBalanceBtn');
+                if (calculateBalanceBtn) {
+                    calculateBalanceBtn.addEventListener('click', () => {
+                        calculateBalance();
+                        autoSave();
+                    });
+                }
+
+                // Simulation
+                const runSimulationBtn = document.getElementById('runSimulationBtn');
+                if (runSimulationBtn) runSimulationBtn.addEventListener('click', runSimulation);
+
+                // Historique
+                const addLeaveBtn = document.getElementById('addLeaveBtn');
+                if (addLeaveBtn) addLeaveBtn.addEventListener('click', addLeavePeriod);
+                const importHistoryBtn = document.getElementById('importHistoryBtn');
+                if (importHistoryBtn) importHistoryBtn.addEventListener('click', importHistory);
+                const analyzeBtn = document.getElementById('analyzeBtn');
+                if (analyzeBtn) analyzeBtn.addEventListener('click', analyzeHistory);
+                const clearBtn = document.getElementById('clearBtn');
+                if (clearBtn) clearBtn.addEventListener('click', clearHistory);
+                const exportBtn = document.getElementById('exportBtn');
+                if (exportBtn) exportBtn.addEventListener('click', exportHistory);
+                const reportBtn = document.getElementById('reportBtn');
+                if (reportBtn) reportBtn.addEventListener('click', generateReport);
+
+                // Audit
+                const runAuditBtn = document.getElementById('runAuditBtn');
+                if (runAuditBtn) runAuditBtn.addEventListener('click', runAudit);
+
                 // Suggestions initiales de l'IA
                 setTimeout(() => {
                     const totalDays = currentBalance.principal + currentBalance.cinquieme +
@@ -4174,7 +4338,12 @@
             } catch (e) {
                 console.error("Erreur critique lors de l'initialisation :", e);
                 // Fallback display if everything crashes
-                document.body.innerHTML += `<div style="color: red; padding: 20px; text-align: center;">Erreur d'initialisation de l'application : ${e.message}</div>`;
+                const errorDiv = document.createElement('div');
+                errorDiv.style.color = 'red';
+                errorDiv.style.padding = '20px';
+                errorDiv.style.textAlign = 'center';
+                errorDiv.textContent = `Erreur d'initialisation de l'application : ${e.message}`;
+                document.body.appendChild(errorDiv);
             }
         });
     </script>
