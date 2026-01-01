@@ -1125,7 +1125,7 @@
                     </div>
 
                     <div id="selectionInfo" class="selection-info" style="display: none;">
-                        <div class="selection-header">📍 Périodes sélectionnées</div>
+                        <div class="selection-header">✨ Vos Souhaits de Congés</div>
                         <div id="periodsList" class="periods-list"></div>
                         <div class="selection-summary">
                             <div style="font-size: 0.9rem; color: var(--text-light);">Total de jours ouvrables</div>
@@ -2412,8 +2412,19 @@
 
             // Suggestions supplémentaires
             if (optimizations.length > 0) {
-                optimizations.forEach(opt => {
-                    if (opt.gain > 0) {
+                // Trier les optimisations par gain décroissant puis efficacité
+                optimizations.sort((a, b) => {
+                    if (a.gain !== b.gain) return b.gain - a.gain;
+                    return parseFloat(b.efficiency) - parseFloat(a.efficiency);
+                });
+
+                // N'afficher que les 3 meilleures suggestions + les ponts
+                const bestOptimizations = optimizations.slice(0, 3);
+
+                bestOptimizations.forEach(opt => {
+                    // Ne pas suggérer si c'est déjà ce qu'on a sélectionné (gain 0 et même durée)
+                    // Sauf si c'est un pont spécifique (pour l'explication)
+                    if (opt.gain > 0 || opt.efficiency > 100) {
                         addAISuggestion(
                             opt.title,
                             opt.description,
@@ -2462,7 +2473,98 @@
                 optimizations.push(summerOptim);
             }
 
+            // Optimisation 5 : Recherche Intelligente (Smart Date Shifting)
+            const smartAdjustments = findSmartAdjustments(start, end, currentDays);
+            if (smartAdjustments.length > 0) {
+                optimizations.push(...smartAdjustments);
+            }
+
             return optimizations;
+        }
+
+        function findSmartAdjustments(start, end, currentDays) {
+            const adjustments = [];
+            const weeklyRestDay = parseInt(document.getElementById('weeklyRestDay').value) || 0;
+
+            // Paramètres de recherche
+            const maxOffset = 3; // Chercher +/- 3 jours avant et après
+
+            // Calculer l'efficacité actuelle = Jours de repos consécutifs / Jours posés
+            // Jours de repos = fin - debut + 1 (en jours calendaires)
+            const currentSpan = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+            const currentEfficiency = currentSpan / currentDays;
+
+            // Essayer toutes les combinaisons de décalage
+            for (let offsetStart = -maxOffset; offsetStart <= maxOffset; offsetStart++) {
+                for (let offsetEnd = -maxOffset; offsetEnd <= maxOffset; offsetEnd++) {
+                    // Ne pas tester le cas actuel (0,0) ni les cas absurdes
+                    if (offsetStart === 0 && offsetEnd === 0) continue;
+
+                    const newStart = new Date(start);
+                    newStart.setDate(newStart.getDate() + offsetStart);
+
+                    const newEnd = new Date(end);
+                    newEnd.setDate(newEnd.getDate() + offsetEnd);
+
+                    if (newEnd < newStart) continue; // Invalide
+
+                    // Ne pas proposer de dates dans le passé ou trop proches si règle entreprise
+                    // (Simplification ici, on suppose que l'IA propose le "meilleur théorique")
+
+                    const newSpan = Math.floor((newEnd - newStart) / (1000 * 60 * 60 * 24)) + 1;
+
+                    // Calculer le dernier jour ouvrable avant la reprise pour le calcul CNETP exact
+                    const reprise = new Date(newEnd);
+                    reprise.setDate(reprise.getDate() + 1);
+                    const lastOuvrable = getLastOuvrableBefore(reprise, weeklyRestDay);
+                    const newDaysNeeded = countOuvrables(newStart, lastOuvrable, weeklyRestDay);
+
+                    if (newDaysNeeded === 0) continue; // Pas de jours posés ??
+
+                    const newEfficiency = newSpan / newDaysNeeded;
+
+                    // Si on trouve une meilleure efficacité ou un gain de jours significative
+                    if (newEfficiency > currentEfficiency) {
+                        // Construire le titre et la description
+                        let title = "";
+                        let desc = "";
+
+                        if (offsetStart === offsetEnd) {
+                            const direction = offsetStart > 0 ? "plus tard" : "plus tôt";
+                            title = `🗓️ Décaler de ${Math.abs(offsetStart)} jours ${direction}`;
+                            desc = `Même durée, mais vous consommez moins de jours ou gagnez plus de repos.`;
+                        } else if (newDaysNeeded < currentDays) {
+                            title = `💰 Économiser ${currentDays - newDaysNeeded} jour(s)`;
+                            desc = `En ajustant les dates, vous posez moins de jours pour une période similaire.`;
+                        } else if (newSpan > currentSpan) {
+                            title = `🏖️ Gagner ${newSpan - currentSpan} jours de repos`;
+                            desc = `En ajoutant quelques jours, vous maximiser votre période de repos.`;
+                        } else {
+                            title = `✨ Optimisation trouvée`;
+                            desc = `Meilleur ratio repos/jours posés (${newEfficiency.toFixed(1)} vs ${currentEfficiency.toFixed(1)})`;
+                        }
+
+                        adjustments.push({
+                            title: title,
+                            description: desc + ` (${formatDisplayDate(formatDate(newStart))} → ${formatDisplayDate(formatDate(newEnd))})`,
+                            newStart: formatDate(newStart),
+                            newEnd: formatDate(newEnd),
+                            extraDays: newDaysNeeded - currentDays,
+                            totalDays: newDaysNeeded,
+                            gain: (newSpan - currentSpan) - (newDaysNeeded - currentDays), // Gain net approximatif en "jours de vie"
+                            efficiency: (newEfficiency * 100).toFixed(0),
+                            tip: `Efficacité : ${newEfficiency.toFixed(2)} jours de repos par jour posé (vs ${currentEfficiency.toFixed(2)})`
+                        });
+                    }
+                }
+            }
+
+            // Trier par efficacité et ne garder que les meilleurs
+            adjustments.sort((a, b) => b.efficiency - a.efficiency);
+
+            // Dédoublonner (garder le meilleur pour chaque type de changement de dates)
+            // Ici on retourne juste les 3 top
+            return adjustments.slice(0, 3);
         }
 
         function findBridges(start, end) {
@@ -2916,24 +3018,47 @@
 
         // ===== BALANCE =====
         function calculateBalance() {
-            // Recalculer l'ancienneté d'abord
+            // 1. Calculer les DROITS ACQUIS (Théoriques)
             const ancienneteDays = calculateSeniorityDays();
             document.getElementById('anciennete').value = ancienneteDays;
 
-            currentBalance = {
+            // Récupérer les droits de base
+            let acquiredRights = {
                 anciennete: ancienneteDays,
                 enfant: parseInt(document.getElementById('enfant').value) || 0,
                 report: parseInt(document.getElementById('report').value) || 0,
                 cinquieme: parseInt(document.getElementById('cinquieme').value) || 6,
-                fractionnement: parseInt(document.getElementById('fractionnement').value) || 0,
+                fractionnement: 0, // Sera calculé ci-dessous
                 principal: 24
             };
 
-            // Recalculer le fractionnement depuis l'historique
+            // Recalculer le fractionnement depuis l'historique (Bonus)
             const fractionnement = calculateFractionnementFromHistory();
-            currentBalance.fractionnement = fractionnement;
+            acquiredRights.fractionnement = fractionnement;
             document.getElementById('fractionnement').value = fractionnement;
 
+            // 2. Calculer le SOLDE RESTANT (Droits - Jours pris)
+            // On part des droits acquis et on soustrait ce qui a été consommé
+            let remainingBalance = { ...acquiredRights };
+
+            // Trier les congés par date pour respecter l'ordre chronologique (important pour la logique, même si imputeDays est stateless par période)
+            const sortedLeaves = [...leaveHistory].sort((a, b) => new Date(a.debut) - new Date(b.debut));
+
+            let totalConsumed = 0;
+
+            sortedLeaves.forEach(leave => {
+                // Pour chaque période, on consomme les droits restants
+                const result = imputeDays(remainingBalance, leave.jours);
+                remainingBalance = result.remaining;
+                totalConsumed += result.totalConsumed;
+            });
+
+            // Mettre à jour l'état global avec le SOLDE RESTANT
+            currentBalance = remainingBalance;
+
+            // 3. Mettre à jour l'affichage
+
+            // Afficher le solde restant
             document.getElementById('balancePrincipal').textContent = currentBalance.principal;
             document.getElementById('balanceCinquieme').textContent = currentBalance.cinquieme;
             document.getElementById('balanceFractionnement').textContent = currentBalance.fractionnement;
@@ -2941,11 +3066,21 @@
             document.getElementById('balanceEnfant').textContent = currentBalance.enfant;
             document.getElementById('balanceReport').textContent = currentBalance.report;
 
-            const total = currentBalance.principal + currentBalance.cinquieme +
+            // Calculer le total disponible
+            const totalAvailable = currentBalance.principal + currentBalance.cinquieme +
                 currentBalance.fractionnement + currentBalance.anciennete +
                 currentBalance.enfant + currentBalance.report;
 
-            updateAIMessage(`✅ Solde recalculé ! Vous avez <strong>${total} jours ouvrables</strong> disponibles au total.`, 'success');
+            // Calculer le total des droits acquis (pour info)
+            const totalRights = acquiredRights.principal + acquiredRights.cinquieme +
+                acquiredRights.fractionnement + acquiredRights.anciennete +
+                acquiredRights.enfant + acquiredRights.report;
+
+            let message = `✅ <strong>Solde mis à jour :</strong> Vous avez <strong>${totalAvailable} jours</strong> restants (sur ${totalRights} acquis).`;
+            if (totalConsumed > 0) {
+                message += `<br>📉 <em>${totalConsumed} jours déjà posés.</em>`;
+            }
+            updateAIMessage(message, 'success');
         }
 
         // ===== SIMULATION =====
@@ -3426,6 +3561,144 @@
             updateAIMessage(`✅ Analyse terminée ! ${fractionnement > 0 ? `Vous bénéficiez de ${fractionnement} jour(s) de fractionnement. 🎉` : 'Optimisez votre planning pour obtenir le fractionnement.'}`, 'success');
         }
 
+        // ===== EXPORT / REPORTING =====
+        function generateReport() {
+            const today = new Date().toLocaleDateString('fr-FR');
+            const userCategory = document.getElementById('userCategory').options[document.getElementById('userCategory').selectedIndex].text;
+            const serviceYears = document.getElementById('serviceYears').value;
+
+            // Calculer les totaux pour le rapport
+            const acquiredPrincipal = 24; // Fixe pour démo/MVP
+            const takenPrincipal = 24 - currentBalance.principal; // Approx
+
+            // Construire le HTML du rapport
+            const reportHtml = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Rapport Congés - ${today}</title>
+                    <style>
+                        body { font-family: 'Segoe UI', sans-serif; padding: 40px; color: #333; }
+                        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+                        h2 { color: #2980b9; margin-top: 30px; font-size: 1.2rem; }
+                        .header-info { display: flex; justify-content: space-between; margin-bottom: 30px; background: #f8f9fa; padding: 20px; border-radius: 8px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                        th { background-color: #f2f2f2; color: #2c3e50; }
+                        .balance-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
+                        .card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; text-align: center; }
+                        .card strong { display: block; font-size: 1.5rem; color: #2c3e50; }
+                        .footer { margin-top: 50px; font-size: 0.8rem; text-align: center; color: #7f8c8d; border-top: 1px solid #eee; padding-top: 20px; }
+                        @media print {
+                            body { -webkit-print-color-adjust: exact; padding: 0; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header-info">
+                        <div>
+                            <strong>OptiCongés IA</strong><br>
+                            Rapport de Planification
+                        </div>
+                        <div style="text-align: right;">
+                            <strong>Date :</strong> ${today}<br>
+                            <strong>Catégorie :</strong> ${userCategory}<br>
+                            <strong>Ancienneté :</strong> ${serviceYears} ans
+                        </div>
+                    </div>
+
+                    <h1>État des Lieux</h1>
+
+                    <h2>📊 Solde des Congés (Jours Ouvrables)</h2>
+                    <div class="balance-summary">
+                        <div class="card">
+                            Acquis (Est.)
+                            <strong>${30 + currentBalance.anciennete + currentBalance.enfant + currentBalance.report}</strong>
+                        </div>
+                        <div class="card">
+                            Consommés (Est.)
+                            <strong>${leaveHistory.reduce((acc, l) => acc + l.jours, 0)}</strong>
+                        </div>
+                        <div class="card">
+                            Restants
+                            <strong>${currentBalance.principal + currentBalance.cinquieme + currentBalance.fractionnement + currentBalance.anciennete + currentBalance.enfant + currentBalance.report}</strong>
+                        </div>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Restant</th>
+                                <th>Détails</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Principal</td>
+                                <td>${currentBalance.principal}</td>
+                                <td>Congé légal de base (max 24j)</td>
+                            </tr>
+                            <tr>
+                                <td>5ème Semaine</td>
+                                <td>${currentBalance.cinquieme}</td>
+                                <td>Semaine supplémentaire (6j)</td>
+                            </tr>
+                            <tr>
+                                <td>Fractionnement</td>
+                                <td>${currentBalance.fractionnement}</td>
+                                <td>Jours bonus optimisation</td>
+                            </tr>
+                            <tr>
+                                <td>Ancienneté / Autres</td>
+                                <td>${currentBalance.anciennete + currentBalance.enfant + currentBalance.report}</td>
+                                <td>Droits spécifiques</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>🗓️ Historique des Périodes Planifiées</h2>
+                    ${leaveHistory.length > 0 ? `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Début</th>
+                                    <th>Fin</th>
+                                    <th>Jours Décomptés</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${leaveHistory.sort((a, b) => new Date(a.debut) - new Date(b.debut)).map(l => `
+                                    <tr>
+                                        <td>${formatDisplayDate(l.debut)}</td>
+                                        <td>${formatDisplayDate(l.fin)}</td>
+                                        <td><strong>${l.jours}</strong> jours</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    ` : '<p><em>Aucune période planifiée pour le moment.</em></p>'}
+
+                    <div class="footer">
+                        Rapport généré automatiquement par OptiCongés IA.<br>
+                        Ce document est une simulation et ne vaut pas validation officielle.
+                    </div>
+
+                    <script>
+                        window.onload = function() { window.print(); }
+                    <\/script>
+</body>
+
+</html>
+`;
+
+            // Ouvrir dans une nouvelle fenêtre
+            const win = window.open('', '_blank');
+            win.document.write(reportHtml);
+            win.document.close();
+        }
+
         // ===== AUDIT =====
         function runAudit() {
             if (leaveHistory.length === 0) {
@@ -3488,64 +3761,70 @@
 
             if (issues.length === 0 && warnings.length === 0) {
                 html = `
-                    <div class="audit-alert success">
-                        <span style="font-size: 1.5rem;">✅</span>
-                        <div>
-                            <strong>Audit réussi !</strong><br>
-                            Aucune erreur détectée dans votre décompte. Total calculé : ${totalCalculated} jours ouvrables.
-                        </div>
-                    </div>
-                `;
+<div class="audit-alert success">
+    <span style="font-size: 1.5rem;">✅</span>
+    <div>
+        <strong>Audit réussi !</strong><br>
+        Aucune erreur détectée dans votre décompte. Total calculé : ${totalCalculated} jours ouvrables.
+    </div>
+</div>
+`;
             } else {
                 if (issues.length > 0) {
                     html += `
-                        <div class="audit-alert error">
-                            <span style="font-size: 1.5rem;">❌</span>
-                            <div>
-                                <strong>${issues.length} erreur(s) détectée(s) :</strong><br>
-                                <ul style="margin-top: 10px; margin-left: 20px;">
-                    `;
+<div class="audit-alert error">
+    <span style="font-size: 1.5rem;">❌</span>
+    <div>
+        <strong>${issues.length} erreur(s) détectée(s) :</strong><br>
+        <ul style="margin-top: 10px; margin-left: 20px;">
+            `;
                     issues.forEach(issue => {
-                        html += `<li>Période ${issue.period} : Déclaré ${issue.declared} jours, Calculé ${issue.calculated} jours (différence: ${issue.diff} jour(s))</li>`;
+                        html += `<li>Période ${issue.period} : Déclaré ${issue.declared} jours, Calculé ${issue.calculated} jours
+                (différence: ${issue.diff} jour(s))</li>`;
                     });
-                    html += `</ul></div></div>`;
+                    html += `</ul>
+    </div>
+</div>`;
                 }
 
                 if (warnings.length > 0) {
                     html += `
-                        <div class="audit-alert warning">
-                            <span style="font-size: 1.5rem;">⚠️</span>
-                            <div>
-                                <strong>${warnings.length} période(s) sans nombre de jours déclaré :</strong><br>
-                                <ul style="margin-top: 10px; margin-left: 20px;">
-                    `;
+<div class="audit-alert warning">
+    <span style="font-size: 1.5rem;">⚠️</span>
+    <div>
+        <strong>${warnings.length} période(s) sans nombre de jours déclaré :</strong><br>
+        <ul style="margin-top: 10px; margin-left: 20px;">
+            `;
                     warnings.forEach(warning => {
                         html += `<li>Période ${warning.period} : Calculé ${warning.calculated} jours ouvrables</li>`;
                     });
-                    html += `</ul></div></div>`;
+                    html += `</ul>
+    </div>
+</div>`;
                 }
             }
 
             html += `
-                <div class="analysis-box" style="margin-top: 20px;">
-                    <h4>📊 Résumé de l'audit</h4>
-                    <div class="result-item">
-                        <span><strong>Total jours calculés :</strong></span>
-                        <span>${totalCalculated} jours ouvrables</span>
-                    </div>
-                    <div class="result-item">
-                        <span><strong>Erreurs détectées :</strong></span>
-                        <span>${issues.length}</span>
-                    </div>
-                    <div class="result-item">
-                        <span><strong>Avertissements :</strong></span>
-                        <span>${warnings.length}</span>
-                    </div>
-                </div>
-            `;
+<div class="analysis-box" style="margin-top: 20px;">
+    <h4>📊 Résumé de l'audit</h4>
+    <div class="result-item">
+        <span><strong>Total jours calculés :</strong></span>
+        <span>${totalCalculated} jours ouvrables</span>
+    </div>
+    <div class="result-item">
+        <span><strong>Erreurs détectées :</strong></span>
+        <span>${issues.length}</span>
+    </div>
+    <div class="result-item">
+        <span><strong>Avertissements :</strong></span>
+        <span>${warnings.length}</span>
+    </div>
+</div>
+`;
 
             container.innerHTML = html;
-            updateAIMessage(`🔍 Audit terminé ! ${issues.length} erreur(s) détectée(s), ${warnings.length} avertissement(s).`, issues.length > 0 ? 'error' : 'warning');
+            updateAIMessage(`🔍 Audit terminé ! ${issues.length} erreur(s) détectée(s), ${warnings.length} avertissement(s).`,
+                issues.length > 0 ? 'error' : 'warning');
         }
 
         // ===== UTILITAIRES =====
@@ -3617,7 +3896,6 @@
             });
 
             // Vérifier les 12 jours continus du principal en été
-            // Il faut trouver une période continue de 12 jours ou plus du principal en été
             let has12ContinuousSummer = false;
             let maxContinuousPrincipalSummer = 0;
             let currentContinuous = 0;
@@ -3630,13 +3908,12 @@
             }).sort((a, b) => new Date(a.debut) - new Date(b.debut));
 
             // Simuler à nouveau pour trouver les périodes continues du principal en été
-            // Toujours SANS fractionnement pour déterminer la continuité des jours du principal
             let tempRights = {
                 anciennete: parseInt(document.getElementById('anciennete').value) || 0,
                 enfant: parseInt(document.getElementById('enfant').value) || 0,
                 report: parseInt(document.getElementById('report').value) || 0,
                 cinquieme: parseInt(document.getElementById('cinquieme').value) || 6,
-                fractionnement: 0, // Pas de fractionnement pour le calcul de continuité
+                fractionnement: 0,
                 principal: 24
             };
 
@@ -3646,14 +3923,9 @@
                 const leaveStart = new Date(leave.debut);
                 const leaveEnd = new Date(leave.fin);
 
-                // Vérifier si cette période est continue avec la précédente
-                // Deux périodes sont continues si la fin de l'une est juste avant le début de l'autre
-                // (avec au plus 1 jour de gap pour tenir compte des weekends/jours fériés)
                 if (lastEndDate) {
                     const daysBetween = Math.floor((leaveStart - lastEndDate) / (1000 * 60 * 60 * 24));
-                    // Si plus de 2 jours entre les périodes, ce n'est pas continu
                     if (daysBetween > 2) {
-                        // Il y a un gap significatif, réinitialiser le compteur
                         currentContinuous = 0;
                     }
                 }
@@ -3662,8 +3934,6 @@
                 tempRights = result.remaining;
                 const principalConsumed = result.consumed.PRINCIPAL;
 
-                // Ajouter UNIQUEMENT les jours du principal (24 premiers jours)
-                // Exclure explicitement la 5ème semaine (CINQUIEME) du calcul de continuité
                 currentContinuous += principalConsumed;
                 if (currentContinuous > maxContinuousPrincipalSummer) {
                     maxContinuousPrincipalSummer = currentContinuous;
@@ -3825,13 +4095,14 @@
                 alertDiv.className = 'audit-alert warning';
                 alertDiv.style.marginTop = '20px';
                 alertDiv.innerHTML = `
-                    <span style="font-size: 1.5rem;">⚠️</span>
-                    <div>
-                        <strong>Rappel important - Échéance du 15 mai</strong><br>
-                        Il reste <strong>${daysUntilMay15} jour(s)</strong> avant la date limite du 15 mai pour poser vos congés selon les règles CNETP.<br>
-                        Assurez-vous d'avoir planifié toutes vos périodes avant cette date.
-                    </div>
-                `;
+            <span style="font-size: 1.5rem;">⚠️</span>
+            <div>
+                <strong>Rappel important - Échéance du 15 mai</strong><br>
+                Il reste <strong>${daysUntilMay15} jour(s)</strong> avant la date limite du 15 mai pour poser vos congés
+                selon les règles CNETP.<br>
+                Assurez-vous d'avoir planifié toutes vos périodes avant cette date.
+            </div>
+            `;
 
                 // Ajouter l'alerte après l'agent IA
                 const aiAgent = document.querySelector('.ai-agent');
@@ -3849,12 +4120,13 @@
                     alertDiv.className = 'audit-alert warning';
                     alertDiv.style.marginTop = '20px';
                     alertDiv.innerHTML = `
-                        <span style="font-size: 1.5rem;">⚠️</span>
-                        <div>
-                            <strong>Rappel important - Échéance du 15 mai ${currentYear + 1}</strong><br>
-                            Il reste <strong>${daysUntilNextMay15} jour(s)</strong> avant la date limite du 15 mai ${currentYear + 1} pour poser vos congés selon les règles CNETP.
-                        </div>
-                    `;
+                <span style="font-size: 1.5rem;">⚠️</span>
+                <div>
+                    <strong>Rappel important - Échéance du 15 mai ${currentYear + 1}</strong><br>
+                    Il reste <strong>${daysUntilNextMay15} jour(s)</strong> avant la date limite du 15 mai ${currentYear
+                        + 1} pour poser vos congés selon les règles CNETP.
+                </div>
+                `;
 
                     const aiAgent = document.querySelector('.ai-agent');
                     if (aiAgent && !document.getElementById('may15Alert')) {
