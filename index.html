@@ -958,71 +958,36 @@
                 grid-template-columns: 1fr;
             }
 
-            .calendar-grid {
-                gap: 5px;
-            }
-
-            .day-number {
-                font-size: 0.8rem;
-            }
-
-            .calendar-day {
-                min-height: 30px;
-            }
-
-            .planning-suggestions {
-                grid-template-columns: 1fr;
-            }
-
-            .tabs {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: thin;
-            }
-
+            /* Responsive Calendar Fixes */
             .calendar-container {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
                 padding: 10px;
-                margin: -10px;
+                /* Ensure it doesn't overflow parent */
+                width: 100%;
+                display: block;
+                /* Fix for potential grid issues */
             }
 
             .calendar-grid {
-                min-width: 700px;
-                gap: 3px;
+                /* Ensure minimum width for readability, scrolling if needed */
+                min-width: 600px;
+                gap: 4px;
             }
 
             .calendar-day {
-                min-height: 35px;
-                font-size: 0.75rem;
+                min-height: 40px;
+                font-size: 0.8rem;
                 padding: 2px;
             }
 
             .day-number {
-                font-size: 0.7rem;
+                font-size: 0.75rem;
             }
 
-            .day-label {
-                font-size: 0.65rem;
-            }
-
-            .table-container {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                margin: -15px;
-                padding: 15px;
-            }
-
-            .periods-list {
-                max-height: 300px;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .selection-info {
-                max-height: 400px;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
+            /* Better tap targets on mobile */
+            .nav-btn {
+                padding: 10px 15px;
             }
 
             .tabs {
@@ -1766,52 +1731,66 @@
 
         // ===== CALENDRIER =====
         function renderCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
+            try {
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
 
-            // Mise à jour du titre
-            const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-                'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-            document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+                // Mise à jour du titre
+                const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                const currentMonthEl = document.getElementById('currentMonth');
+                if (currentMonthEl) {
+                    currentMonthEl.textContent = `${monthNames[month]} ${year}`;
+                }
 
-            // Création de la grille
-            const grid = document.getElementById('calendarGrid');
-            grid.innerHTML = '';
+                // Création de la grille
+                const grid = document.getElementById('calendarGrid');
+                if (!grid) {
+                    console.error("Élément calendarGrid non trouvé !");
+                    return;
+                }
+                grid.innerHTML = '';
 
-            // En-têtes des jours
-            const dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-            dayNames.forEach(day => {
-                const header = document.createElement('div');
-                header.className = 'day-header';
-                header.textContent = day;
-                grid.appendChild(header);
-            });
+                // En-têtes des jours
+                const dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+                dayNames.forEach(day => {
+                    const header = document.createElement('div');
+                    header.className = 'day-header';
+                    header.textContent = day;
+                    grid.appendChild(header);
+                });
 
-            // Premier jour du mois
-            const firstDay = new Date(year, month, 1);
-            let dayOfWeek = firstDay.getDay();
-            dayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+                // Premier jour du mois
+                const firstDay = new Date(year, month, 1);
+                let dayOfWeek = firstDay.getDay();
+                dayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
-            // Derniers jours du mois précédent
-            const prevMonthDays = new Date(year, month, 0).getDate();
-            for (let i = dayOfWeek - 1; i >= 0; i--) {
-                const day = prevMonthDays - i;
-                const cell = createDayCell(year, month - 1, day, true);
-                grid.appendChild(cell);
-            }
+                // Derniers jours du mois précédent
+                const prevMonthDays = new Date(year, month, 0).getDate();
+                for (let i = dayOfWeek - 1; i >= 0; i--) {
+                    const day = prevMonthDays - i;
+                    const cell = createDayCell(year, month - 1, day, true);
+                    grid.appendChild(cell);
+                }
 
-            // Jours du mois actuel
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            for (let day = 1; day <= daysInMonth; day++) {
-                const cell = createDayCell(year, month, day, false);
-                grid.appendChild(cell);
-            }
+                // Jours du mois actuel
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const cell = createDayCell(year, month, day, false);
+                    grid.appendChild(cell);
+                }
 
-            // Premiers jours du mois suivant
-            const remainingCells = 42 - grid.children.length + 7;
-            for (let day = 1; day <= remainingCells; day++) {
-                const cell = createDayCell(year, month + 1, day, true);
-                grid.appendChild(cell);
+                // Premiers jours du mois suivant
+                // Ensure proper grid filling to keep 6 rows if needed or at least square
+                const remainingCells = 42 - grid.children.length + 7;
+                for (let day = 1; day <= remainingCells; day++) {
+                    if (grid.children.length >= 49) break; // Limit to max rows
+                    const cell = createDayCell(year, month + 1, day, true);
+                    grid.appendChild(cell);
+                }
+            } catch (e) {
+                console.error("Erreur dans renderCalendar:", e);
+                updateAIMessage("❌ Erreur lors de l'affichage du calendrier: " + e.message, 'error');
             }
         }
 
@@ -4139,49 +4118,58 @@
 
         // ===== INITIALISATION =====
         document.addEventListener('DOMContentLoaded', function () {
-            // Charger les données sauvegardées
-            const loaded = loadFromLocalStorage();
-            if (loaded) {
-                updateAIMessage('✅ Données chargées depuis la sauvegarde locale.', 'success');
-            }
-
-            const today = new Date();
-            const nextWeek = new Date(today);
-            nextWeek.setDate(nextWeek.getDate() + 7);
-
-            document.getElementById('simStartDate').value = today.toISOString().split('T')[0];
-            document.getElementById('simEndDate').value = nextWeek.toISOString().split('T')[0];
-
-            calculateBalance();
-            renderCalendar();
-            renderHistoryTable();
-
-            // Vérifier l'échéance du 15 mai
-            checkMay15Deadline();
-
-            // Suggestions initiales de l'IA
-            setTimeout(() => {
-                const totalDays = currentBalance.principal + currentBalance.cinquieme +
-                    currentBalance.fractionnement + currentBalance.anciennete +
-                    currentBalance.enfant + currentBalance.report;
-
-                if (leaveHistory.length === 0) {
-                    addAISuggestion(
-                        'Commencer votre planification',
-                        'Je peux vous aider à planifier vos vacances sur toute l\'année. Cliquez sur "Générer un plan" dans la section Planification Annuelle.',
-                        () => generateYearlyPlan()
-                    );
-                } else {
-                    addAISuggestion(
-                        'Analyser votre historique',
-                        'J\'ai détecté des périodes enregistrées. Je peux analyser votre planification et vous donner des conseils d\'optimisation.',
-                        () => analyzeHistory()
-                    );
+            try {
+                // Charger les données sauvegardées
+                const loaded = loadFromLocalStorage();
+                if (loaded) {
+                    updateAIMessage('✅ Données chargées depuis la sauvegarde locale.', 'success');
                 }
-            }, 1000);
 
-            // Sauvegarder automatiquement toutes les 30 secondes
-            setInterval(autoSave, 30000);
+                const today = new Date();
+                const nextWeek = new Date(today);
+                nextWeek.setDate(nextWeek.getDate() + 7);
+
+                const simStartEl = document.getElementById('simStartDate');
+                if (simStartEl) simStartEl.value = today.toISOString().split('T')[0];
+
+                const simEndEl = document.getElementById('simEndDate');
+                if (simEndEl) simEndEl.value = nextWeek.toISOString().split('T')[0];
+
+                calculateBalance();
+                renderCalendar();
+                renderHistoryTable();
+
+                // Vérifier l'échéance du 15 mai
+                checkMay15Deadline();
+
+                // Suggestions initiales de l'IA
+                setTimeout(() => {
+                    const totalDays = currentBalance.principal + currentBalance.cinquieme +
+                        currentBalance.fractionnement + currentBalance.anciennete +
+                        currentBalance.enfant + currentBalance.report;
+
+                    if (leaveHistory.length === 0) {
+                        addAISuggestion(
+                            'Commencer votre planification',
+                            'Je peux vous aider à planifier vos vacances sur toute l\'année. Cliquez sur "Générer un plan" dans la section Planification Annuelle.',
+                            () => generateYearlyPlan()
+                        );
+                    } else {
+                        addAISuggestion(
+                            'Analyser votre historique',
+                            'J\'ai détecté des périodes enregistrées. Je peux analyser votre planification et vous donner des conseils d\'optimisation.',
+                            () => analyzeHistory()
+                        );
+                    }
+                }, 1000);
+
+                // Sauvegarder automatiquement toutes les 30 secondes
+                setInterval(autoSave, 30000);
+            } catch (e) {
+                console.error("Erreur critique lors de l'initialisation :", e);
+                // Fallback display if everything crashes
+                document.body.innerHTML += `<div style="color: red; padding: 20px; text-align: center;">Erreur d'initialisation de l'application : ${e.message}</div>`;
+            }
         });
     </script>
 </body>
