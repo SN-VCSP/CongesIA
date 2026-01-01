@@ -14,7 +14,7 @@
 
         :root {
             /* Couleurs Vinci/Eurovia */
-            --vinci-blue: #003366e3;
+            --vinci-blue: #084683e3;
             --vinci-blue-dark: #001F3F;
             --vinci-blue-light: #004080;
             --vinci-red: #E30613;
@@ -1384,6 +1384,10 @@
                         <button class="btn btn-secondary" onclick="exportHistory()" id="exportBtn"
                             style="display: none;">
                             💾 Exporter en JSON
+                        </button>
+                        <button class="btn btn-primary" onclick="generateReport()" id="reportBtn"
+                            style="display: none; background: var(--vinci-blue);">
+                            📄 Exporter le Récapitulatif
                         </button>
                     </div>
                 </div>
@@ -3226,6 +3230,7 @@
                 document.getElementById('analyzeBtn').style.display = 'none';
                 document.getElementById('clearBtn').style.display = 'none';
                 document.getElementById('exportBtn').style.display = 'none';
+                document.getElementById('reportBtn').style.display = 'none';
                 return;
             }
 
@@ -3264,6 +3269,7 @@
             document.getElementById('analyzeBtn').style.display = 'inline-flex';
             document.getElementById('clearBtn').style.display = 'inline-flex';
             document.getElementById('exportBtn').style.display = 'inline-flex';
+            document.getElementById('reportBtn').style.display = 'inline-flex';
         }
 
         function removeLeave(index) {
