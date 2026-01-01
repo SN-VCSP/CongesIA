@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Gestion du cache pour forcer le rechargement -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>CONGÉS - Assistant IA pour vos Congés</title>
     <style>
         * {
@@ -1016,9 +1020,15 @@
                     <h1>🎉 CONGÉS</h1>
                     <p>Votre assistant IA intelligent pour optimiser vos congés CNETP</p>
                 </div>
-                <div style="position: absolute; top: 15px; right: 15px; font-size: 0.9rem; opacity: 0.9; z-index: 2;">
+                <div
+                    style="position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; align-items: center; z-index: 2;">
+                    <button id="resetAppBtn"
+                        onclick="if(confirm('Voulez-vous vraiment réinitialiser toutes les données de l\'application ? Cela effacera votre historique.')) { localStorage.removeItem('congesIA_data'); window.location.reload(); }"
+                        style="background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255,255,255,0.5); color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; transition: background 0.3s;">
+                        🔄 Réinitialiser l'app
+                    </button>
                     <span id="saveIndicator"
-                        style="display: none; background: rgba(255,255,255,0.3); padding: 5px 10px; border-radius: 5px;">💾
+                        style="display: none; background: rgba(255,255,255,0.3); padding: 5px 10px; border-radius: 5px; font-size: 0.9rem; opacity: 0.9;">💾
                         Sauvegardé</span>
                 </div>
             </div>
@@ -1122,8 +1132,8 @@
                         <button class="btn btn-primary" id="optimizeBtn">🎯 Optimiser la période</button>
                         <button class="btn btn-warning" id="clearSelectionBtn">🗑️ Effacer sélection en
                             cours</button>
-                        <button class="btn btn-secondary" id="clearSuggestionsBtn"
-                            style="display: none;">🗑️ Effacer suggestions</button>
+                        <button class="btn btn-secondary" id="clearSuggestionsBtn" style="display: none;">🗑️ Effacer
+                            suggestions</button>
                     </div>
                     <div id="suggestionsInfo"
                         style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 10px; border-left: 4px solid var(--warning); display: none;">
@@ -1374,15 +1384,13 @@
                         </div>
                     </div>
                     <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="btn btn-success" id="analyzeBtn"
-                            style="display: none;">
+                        <button class="btn btn-success" id="analyzeBtn" style="display: none;">
                             🧠 Analyser avec l'IA
                         </button>
                         <button class="btn btn-secondary" id="clearBtn" style="display: none;">
                             🗑️ Effacer tout l'historique
                         </button>
-                        <button class="btn btn-secondary" id="exportBtn"
-                            style="display: none;">
+                        <button class="btn btn-secondary" id="exportBtn" style="display: none;">
                             💾 Exporter en JSON
                         </button>
                         <button class="btn btn-primary" id="reportBtn"
@@ -1731,21 +1739,21 @@
 
             const suggestion = document.createElement('div');
             suggestion.className = 'ai-suggestion';
-            
+
             const titleDiv = document.createElement('div');
             titleDiv.className = 'ai-suggestion-title';
             titleDiv.textContent = '💡 ';
             const titleSpan = document.createElement('span');
             titleSpan.textContent = title;
             titleDiv.appendChild(titleSpan);
-            
+
             const descDiv = document.createElement('div');
             descDiv.className = 'ai-suggestion-desc';
             descDiv.textContent = description;
-            
+
             suggestion.appendChild(titleDiv);
             suggestion.appendChild(descDiv);
-            
+
             if (action) {
                 suggestion.onclick = action;
             }
